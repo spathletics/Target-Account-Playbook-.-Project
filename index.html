@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Launch-Window Account Playbook · Sasha Podgurskyy for Quantified</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F3F5F2; --surface:#FFFFFF; --ink:#10241F; --muted:#56655F; --line:#CBD4CF;
+  --accent:#1F6F5C; --accent-soft:#DCEBE5; --signal:#B8730F; --signal-soft:#F6E6CC;
+  --tier2:#6B5B95; --tier2-soft:#ECE8F4; --warn:#B3402A; --warn-soft:#F7E1DC;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0E1513; --surface:#16201D; --ink:#E4ECE8; --muted:#9AABA4; --line:#2C3A36;
+    --accent:#5BC1A5; --accent-soft:#1C3530; --signal:#E9A748; --signal-soft:#3A2C16;
+    --tier2:#B4A4E0; --tier2-soft:#2A2540; --warn:#F08C74; --warn-soft:#3B201A; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0E1513; --surface:#16201D; --ink:#E4ECE8; --muted:#9AABA4; --line:#2C3A36;
+  --accent:#5BC1A5; --accent-soft:#1C3530; --signal:#E9A748; --signal-soft:#3A2C16;
+  --tier2:#B4A4E0; --tier2-soft:#2A2540; --warn:#F08C74; --warn-soft:#3B201A; color-scheme:dark;
+}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px);}
+*,*::before,*::after{box-sizing:inherit;}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:16.5px;line-height:1.55;-webkit-font-smoothing:antialiased;}
+a{color:var(--accent);text-underline-offset:3px;}
+button,input,select,textarea{font:inherit;color:inherit;}
+:focus-visible{outline:3px solid var(--signal);outline-offset:2px;border-radius:6px;}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+h1,h2,h3{font-family:"Fraunces",Georgia,"Times New Roman",serif;font-weight:600;line-height:1.12;letter-spacing:-0.01em;margin:0;}
+[hidden]{display:none !important;}
+
+header.top{padding:48px 0 20px;}
+.byline{color:var(--muted);font-size:15px;margin:0 0 16px;}
+.byline strong{color:var(--ink);font-weight:600;}
+h1{font-size:clamp(36px,6vw,64px);max-width:16ch;}
+.lede{font-size:18.5px;max-width:64ch;margin:18px 0 0;}
+.lede span{color:var(--muted);}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:9px;padding:9px 16px;font-weight:600;font-size:15px;cursor:pointer;border:1.5px solid var(--accent);background:transparent;color:var(--accent);}
+.btn:hover{background:var(--accent-soft);}
+.btn.primary{background:var(--accent);color:var(--surface);}
+.btn.primary:hover{filter:brightness(1.08);background:var(--accent);}
+.btn.quiet{border-color:var(--line);color:var(--ink);}
+.btn.quiet:hover{background:var(--paper);}
+.btn.danger{border-color:var(--warn);color:var(--warn);}
+.btn:disabled{opacity:.55;cursor:default;}
+.btn.primary-danger{background:var(--warn);border-color:var(--warn);color:var(--surface);}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin:30px 0 0;border-top:2px solid var(--ink);}
+.stat{padding:14px 18px 4px 0;}
+.stat b{display:block;font-family:"Fraunces",Georgia,serif;font-size:38px;font-weight:600;line-height:1.1;}
+.stat span{color:var(--muted);font-size:14.5px;}
+
+/* radar */
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;}
+.radar{margin-top:34px;padding:24px 24px 16px;}
+.radar-head{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:8px 20px;}
+.radar-head h2{font-size:22px;}
+.legend{display:flex;flex-wrap:wrap;gap:16px;color:var(--muted);font-size:14px;}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-1px;}
+.lg-approved{background:var(--signal);}
+.lg-pdufa{border:2.5px solid var(--accent);background:var(--surface);}
+.radar-scroll{overflow-x:auto;margin-top:16px;padding-bottom:6px;}
+.radar-canvas{position:relative;min-width:980px;}
+.r-axis{position:absolute;left:0;right:0;height:2px;background:var(--line);}
+.r-month{position:absolute;font-size:13px;color:var(--muted);}
+.r-tick{position:absolute;width:1px;height:12px;background:var(--line);}
+.r-today{position:absolute;width:2px;background:var(--ink);opacity:.8;}
+.r-today-lbl{position:absolute;font-size:12.5px;font-weight:700;transform:translateX(-50%);white-space:nowrap;background:var(--surface);padding:0 4px;}
+.r-item{position:absolute;transform:translateX(-50%);text-align:center;font-size:13px;line-height:1.3;width:124px;height:38px;background:var(--surface);border:0;padding:0 2px;cursor:pointer;z-index:2;color:var(--ink);}
+.r-item b,.r-item span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.r-item b{font-weight:700;font-size:13.5px;}
+.r-item span{color:var(--muted);}
+.r-item:hover b{color:var(--accent);text-decoration:underline;}
+.r-stem{position:absolute;width:1.5px;background:var(--line);transform:translateX(-50%);z-index:1;}
+.r-dot{position:absolute;z-index:3;width:16px;height:16px;border-radius:50%;transform:translate(-50%,-50%);}
+.r-dot.approved{background:var(--signal);border:3px solid var(--surface);box-shadow:0 0 0 2px var(--signal);}
+.r-dot.pdufa{background:var(--surface);border:3px solid var(--accent);}
+.r-dot.other{background:var(--muted);border:3px solid var(--surface);box-shadow:0 0 0 2px var(--muted);}
+
+
+/* countdown radar */
+.cd{display:grid;grid-template-columns:minmax(120px,190px) minmax(0,1fr) minmax(0,1fr);align-items:center;row-gap:4px;column-gap:0;font-size:14px;}
+.cd-hd{font-size:13px;color:var(--muted);padding-bottom:4px;}
+.cd-hd.l{text-align:left;padding-right:8px;} .cd-hd.r{text-align:right;padding-left:8px;}
+.cd-today{position:relative;border-right:2px solid var(--ink);}
+.cd-today-lbl{position:absolute;right:-1px;top:-2px;transform:translateX(50%);font-size:12px;font-weight:700;background:var(--surface);padding:0 6px;border-radius:4px;z-index:2;}
+.cd-zone{height:8px;border-radius:4px;}
+.cd-zone-lbl{font-size:12.5px;font-weight:600;padding:2px 0 8px;}
+.cd-name{background:none;border:0;padding:4px 10px 4px 0;text-align:left;cursor:pointer;color:var(--ink);font-weight:600;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cd-name small{display:block;font-weight:400;color:var(--muted);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cd-name:hover{color:var(--accent);text-decoration:underline;text-underline-offset:3px;}
+.cd-cell{display:flex;align-items:center;height:34px;}
+.cd-cell.left{justify-content:flex-end;border-right:2px solid var(--ink);}
+.cd-bar{height:16px;min-width:4px;}
+.cd-bar.approved{background:var(--signal);border-radius:4px 0 0 4px;}
+.cd-bar.pdufa{background:var(--accent);border-radius:0 4px 4px 0;}
+.cd-bar.other{background:var(--muted);border-radius:0 4px 4px 0;}
+.cd-bar.dim{opacity:.4;}
+.cd-n{font-size:13px;color:var(--muted);margin:0 8px;white-space:nowrap;font-variant-numeric:tabular-nums;}
+.cd-n.hot{color:var(--signal);font-weight:700;} .cd-n.prep{color:var(--accent);font-weight:700;}
+.cd-n.late{color:var(--warn);font-weight:700;}
+.cd-row-hot .cd-name{color:var(--ink);}
+.cd-sep{grid-column:1 / -1;border-top:1px dashed var(--line);margin:4px 0;}
+.cd .sh{display:none;}
+@media (max-width:560px){.cd .lg{display:none;}.cd .sh{display:inline;}.lg-note{display:none;}.legend{gap:6px 14px;font-size:13px;}.cd{grid-template-columns:110px minmax(0,1fr) minmax(0,1fr);font-size:13px;}.cd-name{font-size:13.5px;}.cd-zone-lbl{font-size:11.5px;}}
+
+.demo{margin:22px 0 0;padding:12px 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);font-size:15px;max-width:760px;}
+.demo b{color:var(--accent);}
+/* attention */
+.attention{margin-top:22px;padding:16px 20px;border-left:4px solid var(--warn);background:var(--warn-soft);border-radius:0 12px 12px 0;}
+.attention h3{font-family:"Public Sans",sans-serif;font-size:15.5px;font-weight:700;margin-bottom:6px;color:var(--warn);}
+.attention ul{margin:0;padding-left:20px;}
+.attention li{margin:3px 0;}
+.linkish{background:none;border:0;padding:0;color:var(--accent);font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+
+/* toolbar */
+.toolbar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin:44px 0 16px;}
+.toolbar h2{font-size:clamp(26px,3.6vw,34px);}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;}
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:9px;overflow:hidden;}
+.seg button{border:0;background:transparent;padding:8px 14px;cursor:pointer;font-weight:600;font-size:14.5px;color:var(--muted);}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface);}
+.field-inline{border:1.5px solid var(--line);border-radius:9px;padding:8px 12px;background:var(--surface);font-size:15px;}
+input.field-inline{min-width:200px;}
+
+/* board */
+.board{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(230px,1fr);gap:14px;overflow-x:auto;padding-bottom:10px;}
+.col{background:color-mix(in srgb,var(--surface) 55%,var(--paper));border:1px solid var(--line);border-radius:14px;padding:12px;min-height:160px;}
+.col-head{display:flex;justify-content:space-between;align-items:baseline;padding:2px 4px 10px;}
+.col-head h3{font-family:"Public Sans",sans-serif;font-size:15px;font-weight:700;}
+.col-head span{color:var(--muted);font-size:14px;}
+.card{display:block;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:11px;padding:12px 13px;margin-bottom:10px;cursor:pointer;}
+.card:hover{border-color:var(--accent);}
+.card .name{font-weight:700;font-size:15.5px;line-height:1.3;}
+.card .trig{font-size:14px;color:var(--muted);margin-top:4px;}
+.card .when{font-size:13.5px;margin-top:8px;font-weight:600;}
+.card .when.past{color:var(--signal);} .card .when.future{color:var(--accent);} .card .when.stale{color:var(--warn);}
+.card .row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;}
+.pill{display:inline-block;font-size:12.5px;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap;}
+.pill.t1{background:var(--accent-soft);color:var(--accent);}
+.pill.t2{background:var(--tier2-soft);color:var(--tier2);}
+.pill.t3{background:var(--paper);color:var(--muted);border:1px solid var(--line);}
+.pill.flag{background:var(--warn-soft);color:var(--warn);}
+.pill.cust{background:var(--signal-soft);color:var(--signal);}
+.empty-col{color:var(--muted);font-size:14px;padding:6px 4px;}
+
+/* list */
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface);}
+table{border-collapse:collapse;width:100%;min-width:820px;font-size:15px;}
+th,td{text-align:left;padding:12px 14px;border-bottom:1px solid var(--line);vertical-align:top;}
+th{font-weight:600;color:var(--muted);font-size:13.5px;}
+tr:last-child td{border-bottom:0;}
+
+/* empty / notice */
+.notice{padding:28px;text-align:center;color:var(--muted);}
+.notice b{color:var(--ink);display:block;font-size:17px;margin-bottom:4px;}
+
+/* dialog */
+dialog{border:0;padding:0;border-radius:16px;background:var(--surface);color:var(--ink);width:min(880px,calc(100vw - 24px));max-height:calc(100% - 32px);box-shadow:0 24px 60px rgba(10,30,25,.28);}
+dialog::backdrop{background:rgba(10,24,20,.45);}
+.dlg-head{position:sticky;top:0;background:var(--surface);z-index:2;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;padding:22px 26px 14px;border-bottom:1px solid var(--line);}
+.dlg-head h2{font-size:clamp(24px,3.4vw,30px);}
+.dlg-head .meta{color:var(--muted);font-size:14.5px;margin-top:6px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+.x{border:0;background:transparent;font-size:26px;line-height:1;cursor:pointer;color:var(--muted);padding:4px 8px;border-radius:8px;}
+.x:hover{background:var(--paper);}
+.dlg-body{padding:0 26px 26px;}
+.trigger{margin:0 -26px;padding:16px 26px;background:var(--signal-soft);border-bottom:1px solid var(--line);}
+.trigger b{color:var(--signal);}
+.grid2{display:grid;grid-template-columns:1fr 1.1fr;gap:28px;margin-top:20px;}
+.dlg-body h4{font-family:"Public Sans",sans-serif;font-size:14.5px;font-weight:700;margin:18px 0 6px;color:var(--accent);}
+.dlg-body h4:first-child{margin-top:0;}
+.dlg-body p{margin:0 0 6px;}
+.dlg-body ul{margin:4px 0 0;padding-left:20px;}
+.dlg-body li{margin-bottom:4px;}
+.email{border:1px solid var(--line);border-radius:12px;padding:16px 16px 12px;background:var(--paper);}
+.email .subj{font-weight:700;margin-bottom:10px;}
+.email .subj span{font-weight:500;color:var(--muted);}
+.email p{margin:0 0 10px;}
+.email-actions{display:flex;justify-content:flex-end;}
+.opener{font-style:italic;}
+.caution{font-size:15px;color:var(--muted);border-left:3px solid var(--tier2);padding-left:12px;margin-top:12px;}
+.sources{font-size:14px;color:var(--muted);}
+.sources a{color:var(--muted);}
+.stage-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:20px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;}
+.stage-row label{font-weight:600;font-size:14.5px;}
+.log{margin-top:22px;border-top:1px solid var(--line);padding-top:16px;}
+.log h3{font-size:20px;margin-bottom:10px;}
+.log-list{list-style:none;padding:0;margin:0;}
+.log-list li{display:grid;grid-template-columns:96px 1fr;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:15px;}
+.log-list time{color:var(--muted);font-size:13.5px;}
+.log-list .ty{font-weight:700;font-size:13px;color:var(--accent);display:block;}
+.log-add{display:grid;grid-template-columns:170px 1fr auto;gap:10px;margin-top:12px;}
+.dlg-foot{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin-top:22px;}
+
+/* form */
+form.edit .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px 18px;margin-top:18px;}
+form.edit .full{grid-column:1 / -1;}
+form.edit label{display:block;font-weight:600;font-size:14px;margin-bottom:5px;}
+form.edit .hint{font-weight:400;color:var(--muted);}
+form.edit input,form.edit select,form.edit textarea{width:100%;border:1.5px solid var(--line);border-radius:9px;padding:9px 11px;background:var(--paper);font-size:15px;}
+form.edit textarea{min-height:84px;resize:vertical;}
+form.edit textarea.tall{min-height:150px;}
+.ai-box{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:12px;align-items:center;padding:14px 16px;border-radius:12px;background:var(--accent-soft);}
+.ai-box p{margin:0;flex:1 1 280px;font-size:14.5px;}
+.warnline{grid-column:1 / -1;color:var(--warn);font-weight:600;font-size:14.5px;}
+.section-label{grid-column:1 / -1;font-family:"Fraunces",Georgia,serif;font-size:19px;font-weight:600;margin-top:8px;padding-top:12px;border-top:1px solid var(--line);}
+
+/* method + footer */
+.method{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px;margin:56px 0 0;}
+.method div{border-top:2px solid var(--ink);padding-top:12px;}
+.method h3{font-size:18px;margin-bottom:6px;}
+.method p{margin:0;color:var(--muted);font-size:15px;}
+.custlist{color:var(--muted);font-size:15px;}
+footer{margin:64px 0 0;padding:24px 0 44px;border-top:1px solid var(--line);color:var(--muted);font-size:14px;}
+footer p{margin:0 0 6px;max-width:84ch;}
+
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:10px 18px;border-radius:10px;font-size:15px;z-index:50;max-width:calc(100vw - 32px);}
+
+@media (max-width:860px){
+  .grid2{grid-template-columns:1fr;}
+  form.edit .fgrid{grid-template-columns:1fr;}
+  .stats{grid-template-columns:repeat(2,1fr);}
+  .log-add{grid-template-columns:1fr;}
+}
+@media (max-width:520px){
+  body{font-size:16px;}
+  .wrap{padding:0 16px;}
+  header.top{padding-top:32px;}
+  .dlg-head,.dlg-body{padding-left:18px;padding-right:18px;}
+  .trigger{margin:0 -18px;padding-left:18px;padding-right:18px;}
+  input.field-inline{min-width:0;width:100%;}
+  .controls{width:100%;}
+  .log-list li{grid-template-columns:1fr;gap:2px;}
+}
+@media (prefers-reduced-motion:no-preference){
+  .r-dot{animation:pop .45s ease-out both;}
+  @keyframes pop{from{transform:translate(-50%,-50%) scale(0);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <p class="byline"><strong>Sasha Podgurskyy</strong> · work sample for the Quantified Business Development Representative role · <a href="https://www.linkedin.com/in/sashapodgursky">LinkedIn</a></p>
+  <h1>The launch window is the buying window.</h1>
+  <p class="lede">A live prospecting workspace for life sciences accounts. Recent FDA approvals and upcoming decisions are tracked as launch triggers, each with the buyers to reach, the pain to test, and the first touch to send. <span id="freshness">Loading accounts…</span></p>
+  <div class="demo" id="demo"><b>Interactive demo.</b> Move accounts through the pipeline, add a lead, or log an update. Your changes stay in your own browser only. <button class="linkish" type="button" id="resetBtn">Reset to original</button></div>
+  <div class="stats" id="stats" aria-live="polite"></div>
+</header>
+
+<section class="panel radar" aria-labelledby="radar-h">
+  <div class="radar-head">
+    <h2 id="radar-h">Launch radar</h2>
+    <div class="legend"><span><i class="lg-approved" style="border-radius:3px"></i>Days since approval</span><span><i class="lg-pdufa" style="border-radius:3px;background:var(--accent);border:0"></i>Days until FDA decision</span><span class="lg-note">Faded bars are outside the outreach window</span></div>
+  </div>
+  <div id="radar" style="margin-top:18px"></div>
+</section>
+
+<div id="attention"></div>
+
+<div class="toolbar">
+  <h2>Accounts</h2>
+  <div class="controls">
+    <input class="field-inline" id="q" type="search" placeholder="Search company, drug, or area" aria-label="Search accounts">
+    <select class="field-inline" id="fTier" aria-label="Filter by tier"><option value="">All tiers</option><option value="1">Tier 1</option><option value="2">Tier 2</option><option value="3">Tier 3</option></select>
+    <div class="seg" role="group" aria-label="View"><button type="button" data-view="board" aria-pressed="true">Pipeline</button><button type="button" data-view="list" aria-pressed="false">List</button></div>
+    <button class="btn quiet" id="exportBtn" type="button" hidden>Export CSV</button>
+    <button class="btn primary" id="addBtn" type="button" hidden>Add lead</button>
+  </div>
+</div>
+
+<div id="view"></div>
+
+<div class="method">
+  <div><h3>How accounts qualify</h3><p>A U.S. approval in the last six months or an FDA decision in the next quarter, a launch that forces reps to be trained or retrained fast, and no public relationship with Quantified.</p></div>
+  <div><h3>How the pipeline moves</h3><p>Watchlist accounts move to Researching about six weeks before a decision. Outreach starts at approval, when launch training budgets are being spent.</p></div>
+  <div><h3>Existing customers</h3><p class="custlist">Public logos I would route to the AE or Customer Success instead of cold outreach: Novartis, Johnson &amp; Johnson, Sanofi, Takeda, Astellas, Otsuka, Alnylam, Bayer, UCB, Braeburn, Decibel, Vera Therapeutics, Neurelis, Verity.</p></div>
+</div>
+
+<footer>
+  <p>Built by Sasha Podgurskyy. Account facts come from the public sources linked in each brief and were first checked on October 4, 2026; each account keeps a dated activity log as things change. FDA decision dates on the watchlist are sponsor-disclosed target dates and can move.</p>
+  <p>This demo runs entirely in your browser; nothing you change here is sent anywhere.</p>
+  <p>Quantified figures (6x rep practice, 40% faster time to readiness, +19% good selling outcomes) come from quantified.ai.</p>
+</footer>
+</div>
+
+<dialog id="detail" aria-labelledby="d-title"></dialog>
+<dialog id="editor" aria-labelledby="e-title"></dialog>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script>
+(function(){
+"use strict";
+var STAGES=[["watch","Watchlist"],["research","Researching"],["contacted","Contacted"],["engaged","Engaged"],["meeting","Meeting booked"],["handoff","Handed off"]];
+var STAGE_NAME={}; STAGES.forEach(function(s){STAGE_NAME[s[0]]=s[1];});
+var CUSTOMERS=["novartis","johnson & johnson","j&j","sanofi","takeda","astellas","otsuka","alnylam","bayer","ucb","braeburn","decibel","vera therapeutics","neurelis","verity"];
+var LOG_TYPES=["Note","Trigger update","Outreach","Reply","Meeting"];
+
+var accounts=[], loaded=false, canWrite=false, db=null, sampleFn=null, downloads=null;
+var ui={view:"board",q:"",tier:""};
+
+function $(id){return document.getElementById(id);}
+function esc(s){return String(s==null?"":s).replace(/[&<>"']/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+function today(){var d=new Date();d.setHours(0,0,0,0);return d;}
+function todayISO(){var d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
+function parseDate(s){if(!s||!/^\d{4}-\d{2}-\d{2}$/.test(s))return null;var p=s.split("-");return new Date(+p[0],+p[1]-1,+p[2]);}
+function daysBetween(a,b){return Math.round((b-a)/86400000);}
+function fmtDate(s){var d=parseDate(s);if(!d)return s||"";return d.toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"});}
+function toast(msg){var t=$("toast");t.textContent=msg;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(function(){t.hidden=true;},2600);}
+function isCustomer(name){var n=String(name||"").toLowerCase();return CUSTOMERS.some(function(c){return n.indexOf(c)!==-1;});}
+function arr(v){return Array.isArray(v)?v:[];}
+
+function timing(a){
+  var d=parseDate(a.triggerDate); if(!d) return {text:a.triggerDateLabel||"",cls:""};
+  var n=daysBetween(today(),d), lbl=a.triggerDateLabel?(" ("+a.triggerDateLabel+")"):"";
+  if(a.triggerType==="pdufa"){
+    if(n>0) return {text:"FDA decision in "+n+" day"+(n===1?"":"s"),cls:"future"};
+    if(n===0) return {text:"FDA decision due today",cls:"stale"};
+    return {text:"Decision was due "+(-n)+" days ago; check outcome",cls:"stale",stale:true};
+  }
+  if(n<=0) return {text:(a.triggerType==="approved"?"Approved ":"Triggered ")+(-n)+" days ago"+lbl,cls:"past"};
+  return {text:"In "+n+" days",cls:"future"};
+}
+function flags(a){
+  var f=[]; var t=timing(a);
+  if(t.stale) f.push("Decision date passed: update the trigger");
+  var nd=parseDate(a.nextDate); if(nd && nd<today()) f.push("Follow-up was due "+fmtDate(a.nextDate));
+  if(a.stage!=="watch" && !a.emailBody) f.push("No first-touch email drafted yet");
+  return f;
+}
+function tierPill(t){t=String(t||"3");return '<span class="pill t'+esc(t)+'">Tier '+esc(t)+'</span>';}
+
+function filtered(){
+  var q=ui.q.trim().toLowerCase();
+  return accounts.filter(function(a){
+    if(ui.tier && String(a.tier)!==ui.tier) return false;
+    if(!q) return true;
+    return [a.name,a.area,a.triggerLabel,a.trigger,a.hq].join(" ").toLowerCase().indexOf(q)!==-1;
+  }).sort(function(x,y){
+    if(String(x.tier)!==String(y.tier)) return String(x.tier)<String(y.tier)?-1:1;
+    return String(x.name).localeCompare(String(y.name));
+  });
+}
+
+/* ---------- render ---------- */
+function render(){
+  renderStats(); renderRadar(); renderAttention(); renderView();
+  $("addBtn").hidden=!canWrite; $("exportBtn").hidden=!(downloads && loaded && accounts.length);
+}
+function renderStats(){
+  if(!loaded){$("stats").innerHTML="";return;}
+  var active=accounts.filter(function(a){return a.stage!=="watch";}).length;
+  var t1=accounts.filter(function(a){return String(a.tier)==="1";}).length;
+  var upcoming=accounts.filter(function(a){var d=parseDate(a.triggerDate);return a.triggerType==="pdufa"&&d&&d>=today();}).length;
+  var mtg=accounts.filter(function(a){return a.stage==="meeting"||a.stage==="handoff";}).length;
+  $("stats").innerHTML=
+    '<div class="stat"><b>'+active+'</b><span>Accounts in active pursuit</span></div>'+
+    '<div class="stat"><b>'+t1+'</b><span>Tier 1 accounts</span></div>'+
+    '<div class="stat"><b>'+upcoming+'</b><span>FDA decisions ahead</span></div>'+
+    '<div class="stat"><b>'+mtg+'</b><span>Meetings booked</span></div>';
+  var last=accounts.reduce(function(m,a){return a.updatedAt&&a.updatedAt>m?a.updatedAt:m;},"");
+  $("freshness").textContent=last?("Last updated "+fmtDate(last.slice(0,10))+"."):"";
+}
+function renderRadar(){
+  var el=$("radar"), HOT=60, PREP=45;
+  var items=accounts.map(function(a){var d=parseDate(a.triggerDate);return d?{a:a,n:daysBetween(today(),d)}:null;})
+    .filter(function(x){return x && x.n>=-240 && x.n<=180;})
+    .sort(function(x,y){return Math.abs(x.n)-Math.abs(y.n);});
+  if(!items.length){el.innerHTML='<div class="notice"><b>'+(loaded?"No dated triggers yet":"Loading the radar…")+'</b>'+(loaded?"Add a lead with a trigger date to see it here.":"")+'</div>';return;}
+  var max=Math.max(90,items.reduce(function(m,x){return Math.max(m,Math.abs(x.n));},0));
+  function pct(n){return Math.min(100,Math.max(2,Math.abs(n)/max*100));}
+  var h='<div class="cd" role="table" aria-label="Accounts by days since approval or days until FDA decision">';
+  h+='<div></div><div class="cd-hd l cd-today"><span class="lg">Days since approval</span><span class="sh">Since</span><span class="cd-today-lbl">Today</span></div><div class="cd-hd r"><span class="lg">Days until decision</span><span class="sh">Until</span></div>';
+  h+='<div></div><div style="display:flex;justify-content:flex-end;border-right:2px solid var(--ink)"><div class="cd-zone" style="width:'+pct(HOT)+'%;background:var(--signal-soft)"></div></div><div><div class="cd-zone" style="width:'+pct(PREP)+'%;background:var(--accent-soft)"></div></div>';
+  h+='<div></div><div class="cd-zone-lbl" style="text-align:right;padding-right:8px;color:var(--signal);border-right:2px solid var(--ink)"><span class="lg">Hot: first '+HOT+' days of launch</span><span class="sh">Hot window</span></div><div class="cd-zone-lbl" style="padding-left:8px;color:var(--accent)"><span class="lg">Prep: decision within '+PREP+' days</span><span class="sh">Prep window</span></div>';
+  items.forEach(function(x){
+    var a=x.a, n=x.n, past=n<=0, type=a.triggerType==="pdufa"?"pdufa":(a.triggerType==="approved"?"approved":"other");
+    var lateDecision=(type==="pdufa"&&n<0);
+    var inWin=past?(-n<=HOT):(n<=PREP);
+    var numCls=lateDecision?"late":(inWin?(past?"hot":"prep"):"");
+    var numTxt=lateDecision?("decision "+(-n)+"d ago"):(Math.abs(n)+"d");
+    var cust=isCustomer(a.name)?" · customer":"";
+    h+='<button class="cd-name" type="button" data-open="'+esc(a.id)+'" title="'+esc(a.name)+'">'+esc(a.name)+'<small>'+esc((a.triggerLabel||"")+cust)+'</small></button>';
+    if(past){
+      h+='<div class="cd-cell left"><span class="cd-n '+numCls+'">'+esc(numTxt)+'</span><div class="cd-bar '+(lateDecision?"pdufa":type)+(inWin||lateDecision?"":" dim")+'" style="width:'+pct(n)+'%;'+(lateDecision?'background:var(--warn);border-radius:4px 0 0 4px;':(type==="other"?'border-radius:4px 0 0 4px;':''))+'"></div></div><div class="cd-cell"></div>';
+    } else {
+      h+='<div class="cd-cell left"></div><div class="cd-cell"><div class="cd-bar '+type+(inWin?"":" dim")+'" style="width:'+pct(n)+'%"></div><span class="cd-n '+numCls+'">'+esc(numTxt)+'</span></div>';
+    }
+  });
+  h+='</div>';
+  el.innerHTML=h;
+}
+function renderAttention(){
+  if(!loaded||!canWrite){$("attention").innerHTML="";return;}
+  var list=[]; accounts.forEach(function(a){flags(a).forEach(function(f){list.push({a:a,f:f});});});
+  if(!list.length){$("attention").innerHTML="";return;}
+  $("attention").innerHTML='<div class="attention"><h3>Needs attention ('+list.length+')</h3><ul>'+
+    list.slice(0,8).map(function(x){return '<li><button class="linkish" type="button" data-open="'+esc(x.a.id)+'">'+esc(x.a.name)+'</button>: '+esc(x.f)+'</li>';}).join("")+'</ul></div>';
+}
+function cardHTML(a){
+  var t=timing(a), fl=flags(a);
+  return '<button class="card" type="button" data-open="'+esc(a.id)+'"><div class="name">'+esc(a.name)+'</div>'+
+    '<div class="trig">'+esc(a.triggerLabel||a.area||"")+'</div>'+
+    (t.text?'<div class="when '+t.cls+'">'+esc(t.text)+'</div>':'')+
+    '<div class="row">'+tierPill(a.tier)+(isCustomer(a.name)?'<span class="pill cust">Existing customer</span>':'')+(canWrite&&fl.length?'<span class="pill flag">'+fl.length+' to do</span>':'')+'</div></button>';
+}
+function renderView(){
+  var v=$("view");
+  if(!loaded){v.innerHTML='<div class="panel notice" id="loadmsg"><b>Loading accounts…</b>Open this page inside Claude to see the live workspace.</div>';return;}
+  var list=filtered();
+  if(!accounts.length){v.innerHTML='<div class="panel notice"><b>No accounts yet</b>'+(canWrite?'Use <em>Add lead</em> to start the pipeline.':'Check back soon.')+'</div>';return;}
+  if(ui.view==="board"){
+    v.innerHTML='<div class="board">'+STAGES.map(function(s){
+      var inCol=list.filter(function(a){return (a.stage||"research")===s[0];});
+      return '<section class="col" aria-label="'+esc(s[1])+'"><div class="col-head"><h3>'+esc(s[1])+'</h3><span>'+inCol.length+'</span></div>'+
+        (inCol.length?inCol.map(cardHTML).join(""):'<div class="empty-col">Nothing here yet</div>')+'</section>';
+    }).join("")+'</div>';
+  } else {
+    v.innerHTML='<div class="table-wrap"><table><thead><tr><th>Account</th><th>Tier</th><th>Stage</th><th>Trigger</th><th>Timing</th><th>Next step</th></tr></thead><tbody>'+
+      list.map(function(a){var t=timing(a);return '<tr><td><button class="linkish" type="button" data-open="'+esc(a.id)+'">'+esc(a.name)+'</button><div style="color:var(--muted);font-size:13.5px">'+esc(a.area||"")+'</div></td><td>'+tierPill(a.tier)+'</td><td>'+esc(STAGE_NAME[a.stage]||a.stage||"")+'</td><td>'+esc(a.triggerLabel||"")+'</td><td>'+esc(t.text)+'</td><td>'+esc(a.nextStep||"")+(a.nextDate?'<div style="color:var(--muted);font-size:13.5px">'+esc(fmtDate(a.nextDate))+'</div>':'')+'</td></tr>';}).join("")+
+      '</tbody></table></div>';
+    if(!list.length) v.innerHTML='<div class="panel notice"><b>No matches</b>Try a different search or tier.</div>';
+  }
+}
+
+/* ---------- detail ---------- */
+var openId=null;
+function openDetail(id){
+  var a=accounts.find(function(x){return x.id===id;}); if(!a) return; openId=id;
+  var dlg=$("detail"), t=timing(a);
+  var paras=String(a.emailBody||"").split(/\n\s*\n/).filter(Boolean);
+  var srcs=arr(a.sources).filter(function(s){return s&&s.url;});
+  var log=arr(a.log).slice().sort(function(x,y){return String(y.date).localeCompare(String(x.date));});
+  dlg.innerHTML=
+   '<div class="dlg-head"><div><h2 id="d-title">'+esc(a.name)+'</h2><div class="meta">'+esc([a.area,a.hq].filter(Boolean).join(" · "))+' '+tierPill(a.tier)+(isCustomer(a.name)?' <span class="pill cust">Existing customer: route to AE</span>':'')+'</div></div><button class="x" type="button" data-close aria-label="Close">×</button></div>'+
+   '<div class="dlg-body">'+
+    (a.trigger?'<p class="trigger"><b>Trigger:</b> '+esc(a.trigger)+(t.text?' <span style="color:var(--muted)">('+esc(t.text)+')</span>':'')+'</p>':'')+
+    '<div class="grid2"><div>'+
+      (a.why?'<h4>Why this matters to Quantified</h4><p>'+esc(a.why)+'</p>':'')+
+      (arr(a.buyers).length?'<h4>Buyers to reach</h4><ul>'+arr(a.buyers).map(function(b){return '<li>'+esc(b)+'</li>';}).join("")+'</ul>':'')+
+      (arr(a.pains).length?'<h4>Pain hypothesis to test</h4><ul>'+arr(a.pains).map(function(b){return '<li>'+esc(b)+'</li>';}).join("")+'</ul>':'')+
+      (a.play?'<h4>Lead capability</h4><p>'+esc(a.play)+'</p>':'')+
+      (a.caution?'<p class="caution">'+esc(a.caution)+'</p>':'')+
+      (srcs.length?'<h4>Sources</h4><p class="sources">'+srcs.map(function(s){return '<a href="'+esc(s.url)+'" target="_blank" rel="noopener">'+esc(s.label||s.url)+'</a>';}).join(", ")+'</p>':'')+
+    '</div><div>'+
+      '<h4>First-touch email</h4>'+
+      (paras.length?'<div class="email"><div class="subj"><span>Subject:</span> '+esc(a.emailSubject||"")+'</div>'+paras.map(function(p){return '<p>'+esc(p)+'</p>';}).join("")+'<div class="email-actions"><button class="btn" type="button" data-copy>Copy email</button></div></div>':'<p style="color:var(--muted)">Not drafted yet.'+(canWrite?' Use Edit to write one.':'')+'</p>')+
+      (a.opener?'<h4>Call opener</h4><p class="opener">"'+esc(a.opener)+'"</p>':'')+
+      ((a.nextStep||a.nextDate)?'<h4>Next step</h4><p>'+esc(a.nextStep||"")+(a.nextDate?' <span style="color:var(--muted)">by '+esc(fmtDate(a.nextDate))+'</span>':'')+'</p>':'')+
+    '</div></div>'+
+    (canWrite?'<div class="stage-row"><label for="stageSel">Pipeline stage</label><select class="field-inline" id="stageSel">'+STAGES.map(function(s){return '<option value="'+s[0]+'"'+(s[0]===a.stage?' selected':'')+'>'+s[1]+'</option>';}).join("")+'</select></div>':'<p style="margin-top:16px;color:var(--muted)">Stage: '+esc(STAGE_NAME[a.stage]||"")+'</p>')+
+    '<div class="log"><h3>Activity log</h3>'+
+      (log.length?'<ul class="log-list">'+log.map(function(l){return '<li><time>'+esc(fmtDate(l.date))+'</time><div><span class="ty">'+esc(l.type||"Note")+'</span>'+esc(l.text)+'</div></li>';}).join("")+'</ul>':'<p style="color:var(--muted)">No activity yet.</p>')+
+      (canWrite?'<div class="log-add"><select class="field-inline" id="logType" aria-label="Update type">'+LOG_TYPES.map(function(x){return '<option>'+x+'</option>';}).join("")+'</select><input class="field-inline" id="logText" placeholder="What changed? e.g. New VP of Sales Training named" aria-label="Update text"><button class="btn" type="button" id="logAdd">Add update</button></div>':'')+
+    '</div>'+
+    (canWrite?'<div class="dlg-foot"><button class="btn danger" type="button" id="delBtn">Remove account</button><button class="btn primary" type="button" id="editBtn">Edit account</button></div>':'')+
+   '</div>';
+  if(!dlg.open) dlg.showModal();
+  var cp=dlg.querySelector("[data-copy]"); if(cp) cp.addEventListener("click",function(){copyEmail(a,cp);});
+  if(canWrite){
+    $("stageSel").addEventListener("change",function(e){changeStage(a,e.target.value);});
+    $("logAdd").addEventListener("click",function(){var txt=$("logText").value.trim();if(!txt)return;addLog(a,$("logType").value,txt);});
+    $("logText").addEventListener("keydown",function(e){if(e.key==="Enter"){e.preventDefault();$("logAdd").click();}});
+    $("editBtn").addEventListener("click",function(){dlg.close();openEditor(a);});
+    var delBtn=$("delBtn"), armed=false, disarm=null;
+    delBtn.addEventListener("click",function(){
+      if(!armed){
+        armed=true; delBtn.textContent="Click again to remove "+a.name; delBtn.classList.add("primary-danger");
+        disarm=setTimeout(function(){armed=false;delBtn.textContent="Remove account";delBtn.classList.remove("primary-danger");},5000);
+        return;
+      }
+      clearTimeout(disarm); delBtn.disabled=true; delBtn.textContent="Removing…"; remove(a);
+    });
+  }
+}
+function copyEmail(a,btn){
+  var text="Subject: "+(a.emailSubject||"")+"\n\n"+String(a.emailBody||"");
+  function done(){btn.textContent="Copied";setTimeout(function(){btn.textContent="Copy email";},1600);}
+  function fb(){try{var ta=document.createElement("textarea");ta.value=text;ta.style.position="fixed";ta.style.left="-9999px";document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();done();}catch(e){toast("Select the email text to copy it.");}}
+  try{ if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(done,fb);} else fb(); }catch(e){fb();}
+}
+
+/* ---------- writes ---------- */
+function ref(id){return db.collection("accounts").doc(id);}
+function writeErr(e){
+  var c=e&&e.code;
+  if(c==="invalid_argument"){canWrite=false;render();toast("This view can't save changes.");}
+  else if(c==="quota_exceeded") toast("Storage is full. Remove an account to add more.");
+  else toast("Couldn't save. Try again in a moment.");
+}
+function changeStage(a,stage){
+  var log=arr(a.log).concat([{date:todayISO(),type:"Stage",text:"Moved to "+STAGE_NAME[stage]}]);
+  ref(a.id).update({stage:stage,log:log,updatedAt:new Date().toISOString()}).then(function(){toast("Moved to "+STAGE_NAME[stage]);},writeErr);
+}
+function addLog(a,type,text){
+  var log=arr(a.log).concat([{date:todayISO(),type:type,text:text}]);
+  ref(a.id).update({log:log,updatedAt:new Date().toISOString()}).then(function(){toast("Update added");},writeErr);
+}
+function remove(a){
+  ref(a.id).delete().then(function(){if($("detail").open)$("detail").close();toast("Removed "+a.name);},function(e){
+    var b=$("delBtn"); if(b){b.disabled=false;b.textContent="Remove account";b.classList.remove("primary-danger");}
+    writeErr(e);
+  });
+}
+
+/* ---------- editor ---------- */
+var editingId=null;
+function openEditor(a){
+  editingId=a?a.id:null; a=a||{tier:"1",stage:"research",triggerType:"approved"};
+  var dlg=$("editor");
+  function f(name,label,val,type,extra){return '<div'+(extra&&extra.full?' class="full"':'')+'><label for="f_'+name+'">'+label+(extra&&extra.hint?' <span class="hint">'+extra.hint+'</span>':'')+'</label>'+
+    (type==="textarea"?'<textarea id="f_'+name+'" name="'+name+'"'+(extra&&extra.tall?' class="tall"':'')+'>'+esc(val||"")+'</textarea>':'<input id="f_'+name+'" name="'+name+'" type="'+(type||"text")+'" value="'+esc(val||"")+'"'+(extra&&extra.req?' required':'')+'>')+'</div>';}
+  function sel(name,label,val,opts){return '<div><label for="f_'+name+'">'+label+'</label><select id="f_'+name+'" name="'+name+'">'+opts.map(function(o){return '<option value="'+esc(o[0])+'"'+(String(o[0])===String(val)?' selected':'')+'>'+esc(o[1])+'</option>';}).join("")+'</select></div>';}
+  dlg.innerHTML='<div class="dlg-head"><div><h2 id="e-title">'+(editingId?"Edit "+esc(a.name):"Add a lead")+'</h2><div class="meta">Facts go in the trigger and sources; the angle and outreach build on them.</div></div><button class="x" type="button" data-close aria-label="Close">×</button></div>'+
+   '<form class="edit dlg-body" id="editForm" novalidate><div class="fgrid">'+
+    f("name","Company",a.name,"text",{req:true})+
+    f("area","Therapy area",a.area)+
+    f("hq","Headquarters",a.hq)+
+    sel("tier","Priority",a.tier,[["1","Tier 1"],["2","Tier 2"],["3","Tier 3"]])+
+    '<div class="warnline" id="custWarn" hidden>This company appears on Quantified\'s public customer logos. Flag it to the AE instead of cold outreach.</div>'+
+    '<div class="section-label">Trigger</div>'+
+    sel("triggerType","Trigger type",a.triggerType,[["approved","FDA approval"],["pdufa","Upcoming FDA decision"],["other","Other (new leader, expansion, funding)"]])+
+    f("triggerDate","Trigger date",a.triggerDate,"date")+
+    f("triggerLabel","Short label",a.triggerLabel,"text",{hint:"for cards, e.g. Rasonque approved"})+
+    f("triggerDateLabel","Date note",a.triggerDateLabel,"text",{hint:"optional, e.g. Q2 2026"})+
+    f("trigger","What happened",a.trigger,"textarea",{full:true})+
+    f("sources","Sources",arr(a.sources).map(function(s){return (s.label?s.label+" | ":"")+s.url;}).join("\n"),"textarea",{full:true,hint:"one per line: Label | https://…"})+
+    '<div class="section-label">Angle and outreach</div>'+
+    '<div class="ai-box" id="aiBox" hidden><p>Fill in the company and trigger, then let Claude draft the angle, buyers, pains, email, and opener. Review every line before you use it.</p><button class="btn primary" type="button" id="aiBtn">Draft with Claude</button></div>'+
+    f("why","Why this matters to Quantified",a.why,"textarea",{full:true})+
+    f("buyers","Buyers to reach",arr(a.buyers).join("\n"),"textarea",{hint:"one per line"})+
+    f("pains","Pain hypotheses",arr(a.pains).join("\n"),"textarea",{hint:"one per line"})+
+    f("play","Lead capability",a.play,"text",{full:true})+
+    f("emailSubject","Email subject",a.emailSubject,"text",{full:true})+
+    f("emailBody","Email body",a.emailBody,"textarea",{full:true,tall:true,hint:"blank line between paragraphs"})+
+    f("opener","Call opener",a.opener,"textarea",{full:true})+
+    f("caution","Caution or context",a.caution,"textarea",{full:true})+
+    '<div class="section-label">Pipeline</div>'+
+    sel("stage","Stage",a.stage,STAGES)+
+    f("nextDate","Next step due",a.nextDate,"date")+
+    f("nextStep","Next step",a.nextStep,"text",{full:true})+
+   '</div><div class="dlg-foot"><button class="btn quiet" type="button" data-close>Cancel</button><button class="btn primary" type="submit">'+(editingId?"Save changes":"Add lead")+'</button></div></form>';
+  if(!dlg.open) dlg.showModal();
+  var nameIn=$("f_name"); function cw(){$("custWarn").hidden=!isCustomer(nameIn.value);} nameIn.addEventListener("input",cw); cw();
+  
+  $("editForm").addEventListener("submit",function(e){e.preventDefault();save();});
+}
+function lines(s){return String(s||"").split("\n").map(function(x){return x.trim();}).filter(Boolean);}
+function readForm(){
+  var g=function(n){var el=$("f_"+n);return el?el.value.trim():"";};
+  return {name:g("name"),area:g("area"),hq:g("hq"),tier:g("tier"),triggerType:g("triggerType"),triggerDate:g("triggerDate"),triggerLabel:g("triggerLabel"),triggerDateLabel:g("triggerDateLabel"),trigger:g("trigger"),
+    sources:lines(g("sources")).map(function(l){var i=l.lastIndexOf("|");var url=(i>=0?l.slice(i+1):l).trim();var label=i>=0?l.slice(0,i).trim():"";return /^https?:\/\//.test(url)?{label:label,url:url}:null;}).filter(Boolean),
+    why:g("why"),buyers:lines(g("buyers")),pains:lines(g("pains")),play:g("play"),emailSubject:g("emailSubject"),emailBody:$("f_emailBody").value.trim(),opener:g("opener"),caution:g("caution"),stage:g("stage"),nextDate:g("nextDate"),nextStep:g("nextStep")};
+}
+function save(){
+  var d=readForm(); if(!d.name){$("f_name").focus();toast("Add a company name.");return;}
+  d.updatedAt=new Date().toISOString();
+  var existing=editingId?accounts.find(function(x){return x.id===editingId;}):null;
+  var log=existing?arr(existing.log).slice():[];
+  if(!existing) log.push({date:todayISO(),type:"Note",text:"Lead added"});
+  else if(existing.trigger!==d.trigger||existing.triggerDate!==d.triggerDate) log.push({date:todayISO(),type:"Trigger update",text:d.triggerLabel||"Trigger details changed"});
+  if(existing && existing.stage!==d.stage) log.push({date:todayISO(),type:"Stage",text:"Moved to "+STAGE_NAME[d.stage]});
+  d.log=log;
+  var r=editingId?ref(editingId):db.collection("accounts").doc();
+  var p=editingId?r.update(d):r.set(d);
+  p.then(function(){$("editor").close();toast(editingId?"Changes saved":"Lead added");},writeErr);
+}
+function draftWithClaude(){
+  var d=readForm(), btn=$("aiBtn");
+  if(!d.name||!d.trigger){toast("Add the company and what happened first.");return;}
+  btn.disabled=true; btn.textContent="Drafting…";
+  var prompt="You are helping Sasha, a Business Development Representative at Quantified, prepare outreach.\n\n"+
+  "About Quantified: the AI Sales Coaching Platform for life sciences and regulated commercial teams. Capabilities: AI Roleplay (realistic practice for HCP conversations), Readiness AI (onboarding, launch and certification prep), Field AI (mobile pre-call prep, compliant note-taking, post-call coaching; Q4 2026 release; works with Veeva and Salesforce), Compliance AI (on-label scoring, audit-ready records), Self Authoring (build simulations from approved content in days), Insights & Reporting. Built on a private fine-tuned model with MLR-aware governance. Customer results: 6x more rep practice, 40% faster time to readiness, +19% more good selling outcomes. Buyers: sales training, L&D, commercial excellence, sales enablement, field leadership, compliance.\n\n"+
+  "Account: "+d.name+(d.area?" ("+d.area+")":"")+"\nTrigger type: "+d.triggerType+"\nTrigger date: "+(d.triggerDate||d.triggerDateLabel||"unknown")+"\nWhat happened: "+d.trigger+"\n\n"+
+  "Use only the facts above about the account. Do not invent numbers, people, or events. Reply with only a JSON object with these keys:\n"+
+  '{"why": "2 sentences on why the trigger creates a rep-readiness need", "buyers": ["3-4 job titles"], "pains": ["3 short pain hypotheses"], "play": "which Quantified capabilities to lead with, one line", "emailSubject": "under 9 words", "emailBody": "Hi [First name],\\n\\n...\\n\\nSasha  (under 110 words, 3 short paragraphs, one proof point, one low-friction ask, plain and specific, no hype)", "opener": "one-sentence cold-call opener that ends in a question"}';
+  sampleFn.json(prompt,{modelTier:"default"}).then(function(r){
+    if(!r||typeof r!=="object") throw {code:"invalid_json"};
+    function setv(n,v){var el=$("f_"+n);if(el&&v)el.value=v;}
+    setv("why",r.why); setv("buyers",arr(r.buyers).join("\n")); setv("pains",arr(r.pains).join("\n")); setv("play",r.play);
+    setv("emailSubject",r.emailSubject); setv("emailBody",r.emailBody); setv("opener",r.opener);
+    toast("Draft ready. Review it before saving.");
+  }).catch(function(e){
+    var c=e&&e.code;
+    if(c==="not_granted"){$("aiBox").hidden=true;sampleFn=null;toast("Claude drafting isn't available here.");}
+    else if(c==="rate_limited") toast("Too many drafts at once. Wait a minute and try again.");
+    else if(c==="cancelled") {}
+    else toast("The draft didn't come through. Try again.");
+  }).then(function(){btn.disabled=false;btn.textContent="Draft with Claude";});
+}
+
+/* ---------- export ---------- */
+function exportCSV(){
+  var cols=["name","tier","stage","area","hq","triggerType","triggerDate","triggerLabel","trigger","buyers","pains","play","emailSubject","emailBody","opener","nextStep","nextDate"];
+  function cell(v){if(Array.isArray(v))v=v.join("; ");v=String(v==null?"":v);return '"'+v.replace(/"/g,'""')+'"';}
+  var csv=cols.join(",")+"\n"+filtered().map(function(a){return cols.map(function(c){return cell(c==="stage"?STAGE_NAME[a[c]]||a[c]:a[c]);}).join(",");}).join("\n");
+  downloads.save({filename:"quantified-target-accounts.csv",data:csv}).then(function(){toast("CSV saved");},function(e){
+    if(e&&e.code==="declined")return; if(e&&e.code==="rate_limited"){toast("A save prompt is already open.");return;} toast("Export isn't available here.");});
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click",function(e){
+  var o=e.target.closest("[data-open]"); if(o){openDetail(o.getAttribute("data-open"));return;}
+  var c=e.target.closest("[data-close]"); if(c){var d=c.closest("dialog"); if(d)d.close();}
+  var vb=e.target.closest("[data-view]"); if(vb){ui.view=vb.getAttribute("data-view");document.querySelectorAll("[data-view]").forEach(function(b){b.setAttribute("aria-pressed",String(b===vb));});renderView();}
+});
+["detail","editor"].forEach(function(id){$(id).addEventListener("click",function(e){if(e.target===this)this.close();});});
+$("detail").addEventListener("close",function(){openId=null;});
+$("q").addEventListener("input",function(e){ui.q=e.target.value;renderView();});
+$("fTier").addEventListener("change",function(e){ui.tier=e.target.value;renderView();});
+$("addBtn").addEventListener("click",function(){openEditor(null);});
+$("exportBtn").addEventListener("click",exportCSV);
+
+render();
+
+/* ---------- local data (runs anywhere, no sign-in) ---------- */
+var EMBEDDED={"version": "2026-10-04", "accounts": [{"name": "Revolution Medicines", "area": "Oncology", "hq": "Redwood City, CA", "tier": "1", "stage": "research", "triggerType": "approved", "triggerDate": "2026-08-26", "triggerLabel": "Rasonque", "trigger": "FDA approved Rasonque (daraxonrasib) for previously treated metastatic pancreatic cancer about six and a half months ahead of its PDUFA date. It is the company's first marketed product.", "sources": [{"label": "PharmExec", "url": "https://www.pharmexec.com/view/fda-approves-daraxonrasib-targeted-therapy-metastatic-pancreatic-cancer"}, {"label": "Zacks via CNHI", "url": "https://www.cnhinews.com/news/article_56336d9b-4cb0-5843-a55b-9b99566db70d.html"}, {"label": "Q2 2026 results", "url": "https://ir.revmed.com/news-releases/news-release-details/revolution-medicines-reports-second-quarter-2026-financial"}], "why": "A clinical-stage biotech just became a commercial company. Its first field team was assembled from reps trained elsewhere, and the early approval compressed whatever launch-training timeline they had planned.", "buyers": ["Head of Commercial Training or L&D", "VP, Oncology Sales", "Head of Commercial Excellence", "Compliance lead for promotional review"], "pains": ["No shared training standard yet across a newly hired team", "Certification on a narrow second-line indication has to be airtight and on-label", "Limited trainer bandwidth while also building global commercial capability"], "play": "Readiness AI, certification, Self Authoring", "emailSubject": "Rasonque launch readiness, on a shorter clock", "emailBody": "Hi [First name],\n\nCongratulations on Rasonque. Getting approval six and a half months early is remarkable, and it also compresses the window to get a brand-new field team launch-ready.\n\nWhen a first commercial team comes from many different companies, getting everyone to one on-label standard quickly is usually the hardest part. Quantified builds realistic AI practice from your approved content, and customers see about 40% faster time to readiness.\n\nWould 20 minutes be useful to see how other oncology launch teams certify reps before their next training wave?\n\nSasha", "opener": "Hi [name], it's Sasha from Quantified, I'll be brief. With Rasonque approved early, I'm guessing launch training got compressed. How are you certifying new reps on the second-line message right now?", "caution": "", "nextStep": "Identify Head of Commercial Training in Sales Navigator", "nextDate": "2026-10-09", "triggerDateLabel": "", "log": [{"date": "2026-10-04", "type": "Note", "text": "Added from launch-trigger research"}], "updatedAt": "2026-10-04T12:00:00.000Z", "id": "revmed"}, {"name": "Merck", "area": "Cardiometabolic", "hq": "Rahway, NJ", "tier": "1", "stage": "research", "triggerType": "approved", "triggerDate": "2026-06-15", "triggerDateLabel": "Q2 2026", "triggerLabel": "Lipfendra", "trigger": "FDA approved Lipfendra (enlicitide), the first and only once-daily oral PCSK9 inhibitor, reported in Merck's Q2 2026 results. Exact approval day not confirmed; plotted mid-June.", "sources": [{"label": "Merck Q2 2026 results", "url": "https://www.merck.com/news/merck-highlights-key-regulatory-and-clinical-milestones-across-broad-diverse-pipeline/"}, {"label": "HealthDay", "url": "https://www.cbs19news.com/news/health/new-merck-pill-cuts-bad-cholesterol-by-60-potentially-replacing-injections/article_82b4567f-1547-53cd-a9ef-412847bc1f35.html"}, {"label": "Cardiology Advisor, October PDUFA dates", "url": "https://www.thecardiologyadvisor.com/news/october-2026-fda-pdufa-dates/"}], "why": "Merck's stated goal is to \"democratize PCSK9,\" moving a class known for specialist injections into a routine pill. That likely means a much wider set of prescribers and many more conversations to get right.", "buyers": ["Executive Director, Cardiometabolic Sales Training", "Commercial Excellence, U.S. Cardiovascular", "Regional field leadership"], "pains": ["One message has to work for lipid specialists and primary care alike", "Objection handling against statins and injectable PCSK9s", "Hard to see whether the message is landing across a very large field force"], "play": "AI Roleplay by HCP persona, Field AI", "emailSubject": "Lipfendra and one message across very different prescribers", "emailBody": "Hi [First name],\n\nMoving PCSK9 from injection to a once-daily pill probably means your reps are now calling on a much wider range of HCPs, from lipid specialists to primary care.\n\nKeeping the message consistent and on-label across that range, and knowing whether it is actually landing, is where large launches tend to lose value. Quantified gives reps realistic practice against each HCP persona using your approved content, and our new Field AI shows message pull-through from real visits.\n\nOpen to a short conversation on how you're measuring launch execution so far?\n\nSasha", "opener": "Hi [name], Sasha from Quantified. With Lipfendra reaching primary care as well as cardiology, how are you making sure reps handle both conversations the same way?", "caution": "Merck also has an FDA decision on ifinatamab deruxtecan (small cell lung cancer) dated Oct 10, 2026: a second reason to reach out this quarter.", "nextStep": "", "nextDate": "", "log": [{"date": "2026-10-04", "type": "Note", "text": "Added from launch-trigger research"}], "updatedAt": "2026-10-04T12:00:00.000Z", "id": "merck"}, {"name": "AstraZeneca", "area": "Cardiovascular", "hq": "U.S. HQ Wilmington, DE", "tier": "1", "stage": "research", "triggerType": "approved", "triggerDate": "2026-05-18", "triggerLabel": "Baxfendy", "trigger": "FDA approved Baxfendy, a first-of-its-kind hypertension drug. Executives have said it could reach $5 billion or more in annual sales.", "sources": [{"label": "BioPharma Dive", "url": "https://www.biopharmadive.com/news/astrazeneca-baxfendy-approval-hypertension-blood-pressure/820491/"}], "why": "About five months in, the launch is moving from initial training to sustaining performance. A new mechanism in a crowded category means reps must keep explaining something unfamiliar, consistently, for quarters to come.", "buyers": ["Director, Cardiovascular Sales Training", "Head of Field Effectiveness or Commercial Excellence", "First-line sales managers on the launch team"], "pains": ["Knowledge and message drift after launch training ends", "Managers cannot observe enough calls to coach everyone", "Leadership wants proof the launch message is holding up"], "play": "Continuous coaching, Insights & Reporting", "emailSubject": "Baxfendy, five months in", "emailBody": "Hi [First name],\n\nBaxfendy is about five months into launch, usually the point where launch training fades and the question becomes whether the message is holding up in the field.\n\nWith a first-of-its-kind mechanism, reps are explaining something new to HCPs who already have many hypertension options. Quantified helps cardiovascular teams keep reps sharp after launch with continuous, personalized AI practice and coaching built on your approved content. Customers see about 6x more rep practice.\n\nWorth 20 minutes to compare notes on post-launch reinforcement?\n\nSasha", "opener": "Hi [name], Sasha from Quantified. Five months into Baxfendy, what does reinforcement look like for reps now that launch training is behind them?", "caution": "", "nextStep": "", "nextDate": "", "triggerDateLabel": "", "log": [{"date": "2026-10-04", "type": "Note", "text": "Added from launch-trigger research"}], "updatedAt": "2026-10-04T12:00:00.000Z", "id": "az"}, {"name": "Eli Lilly", "area": "Oncology and diabetes", "hq": "Indianapolis, IN", "tier": "2", "stage": "research", "triggerType": "approved", "triggerDate": "2026-09-18", "triggerLabel": "Imlunestrant, Onswik", "trigger": "In September 2026 the FDA approved imlunestrant with abemaciclib for ESR1-mutated advanced breast cancer (Sep 18) and Onswik (insulin efsitora alfa).", "sources": [{"label": "CURE", "url": "https://curetoday.com/view/10-cancer-treatment-approvals-from-september-2026-and-what-they-mean-for-you"}, {"label": "HCPLive", "url": "https://hcplive.com/view/fda-news-recap-novel-drug-approvals-in-q3-2026"}], "why": "Two launches in very different therapy areas within weeks of each other. The training organization has to produce realistic practice for oncologists and diabetes prescribers at the same time.", "buyers": ["Director, Oncology Sales Training", "Director, Diabetes Sales Training", "Learning technology or enablement platform owner"], "pains": ["Content production is the bottleneck, not trainer skill", "Vendor or agency cycles slow down scenario updates", "Inconsistent practice quality across two launch teams"], "play": "Self Authoring, Readiness AI", "emailSubject": "Two September launches, one training team", "emailBody": "Hi [First name],\n\nWith imlunestrant and Onswik both approved in September, I imagine your training teams are supporting two very different launches at once.\n\nThe bottleneck we usually hear about is building realistic practice scenarios for each audience fast enough. Quantified's authoring tools turn approved content into AI roleplay scenarios in days, without waiting on outside production cycles.\n\nWould a quick call be useful to see how other large pharma teams handle back-to-back launches?\n\nSasha", "opener": "Hi [name], Sasha from Quantified. With two launches in September, where is your team feeling the most pressure, building content or getting reps certified?", "caution": "Why Tier 2: a very large enterprise with likely incumbent tools and a long buying cycle. Multi-thread both therapy-area training leads and coordinate with the AE first.", "nextStep": "", "nextDate": "", "triggerDateLabel": "", "log": [{"date": "2026-10-04", "type": "Note", "text": "Added from launch-trigger research"}], "updatedAt": "2026-10-04T12:00:00.000Z", "id": "lilly"}, {"name": "Ultragenyx", "area": "Rare disease", "hq": "Novato, CA", "tier": "2", "stage": "research", "triggerType": "approved", "triggerDate": "2026-09-17", "triggerLabel": "Fayuvi", "trigger": "FDA granted full approval of Fayuvi (UX111), the first treatment for Sanfilippo syndrome type A and the company's second gene therapy approval.", "sources": [{"label": "NeurologyLive", "url": "https://www.neurologylive.com/view/fda-approves-ux111-first-gene-therapy-sanfilippo-syndrome-type-a"}, {"label": "Stocktwits News", "url": "https://stocktwits.com/news-articles/markets/equity/rare-stock-jumps-13-extends-gains-after-hours-as-fda-clears-first-sanfilippo-gene-therapy/cZtscCrRBdq"}], "why": "Rare-disease launches run on small, specialized teams with very few chances to get each specialist conversation right. Those conversations are scientifically complex and emotionally sensitive.", "buyers": ["Head of Commercial Training, Rare Disease", "VP, U.S. Commercial", "Compliance or medical-commercial review lead"], "pains": ["Every rep conversation is high stakes and hard to rehearse", "Small team, so slow ramp is costly", "Spend will need a clear, measurable return"], "play": "AI Roleplay, Compliance AI, ROI reporting", "emailSubject": "Fayuvi launch and making every conversation count", "emailBody": "Hi [First name],\n\nCongratulations on Fayuvi. A first-ever therapy for Sanfilippo type A is a big moment.\n\nIn rare disease, a small team gets very few chances with each specialist, so every conversation has to be precise, empathetic, and on-label. Quantified lets reps rehearse those conversations with realistic AI practice built from your approved materials, and gives leaders measurable readiness data.\n\nWould a brief call make sense to see whether this fits your launch plan?\n\nSasha", "opener": "Hi [name], Sasha from Quantified. With a small team launching Fayuvi, how are reps practicing the specialist conversations before they happen?", "caution": "Why Tier 2: in early September a failed late-stage Angelman trial sent shares down about 44% in a day, so budgets are likely under scrutiny. Don't mention it in outreach; lead with efficiency and measurable ROI.", "nextStep": "", "nextDate": "", "triggerDateLabel": "", "log": [{"date": "2026-10-04", "type": "Note", "text": "Added from launch-trigger research"}], "updatedAt": "2026-10-04T12:00:00.000Z", "id": "ultragenyx"}, {"name": "Summit Therapeutics", "area": "Oncology", "hq": "", "tier": "1", "stage": "watch", "triggerType": "pdufa", "triggerDate": "2026-11-14", "triggerDateLabel": "", "triggerLabel": "Ivonescimab", "trigger": "FDA decision on the BLA for ivonescimab plus chemotherapy is listed for November 14, 2026 (provisional date).", "sources": [{"label": "Assyro November 2026 PDUFA calendar", "url": "https://www.assyro.com/tools/pdufa-calendar/2026/november"}], "why": "If approved, this would likely be a first major U.S. launch, which means building or scaling an oncology field team and certifying it fast.", "buyers": ["Head of Commercial Training", "VP, Oncology Sales", "Commercial Operations lead"], "pains": ["Launch training on a compressed timeline", "Certifying reps against a competitive, data-heavy story"], "play": "Readiness AI, certification", "emailSubject": "", "emailBody": "", "opener": "", "caution": "", "nextStep": "Move to Researching about six weeks before the decision", "nextDate": "", "log": [{"date": "2026-10-04", "type": "Note", "text": "Added from launch-trigger research"}], "updatedAt": "2026-10-04T12:00:00.000Z", "id": "summit"}, {"name": "Nuvalent", "area": "Oncology", "hq": "", "tier": "1", "stage": "watch", "triggerType": "pdufa", "triggerDate": "2026-11-27", "triggerDateLabel": "", "triggerLabel": "Neladalkib", "trigger": "FDA decision on the NDA for neladalkib in TKI-pretreated advanced ALK-positive lung cancer is listed for November 27, 2026 (provisional date).", "sources": [{"label": "Assyro November 2026 PDUFA calendar", "url": "https://www.assyro.com/tools/pdufa-calendar/2026/november"}], "why": "A potential first commercial launch for the company, so the field team and its training standard would be new.", "buyers": ["Head of Commercial Training", "VP, Sales", "Commercial Excellence"], "pains": ["No established training infrastructure", "Precise on-label messaging in a targeted lung cancer population"], "play": "Readiness AI, Self Authoring", "emailSubject": "", "emailBody": "", "opener": "", "caution": "", "nextStep": "Move to Researching about six weeks before the decision", "nextDate": "", "log": [{"date": "2026-10-04", "type": "Note", "text": "Added from launch-trigger research"}], "updatedAt": "2026-10-04T12:00:00.000Z", "id": "nuvalent"}, {"name": "Savara", "area": "Rare pulmonary disease", "hq": "", "tier": "2", "stage": "watch", "triggerType": "pdufa", "triggerDate": "2026-11-22", "triggerDateLabel": "", "triggerLabel": "Molgramostim", "trigger": "FDA decision on the BLA for molgramostim in autoimmune pulmonary alveolar proteinosis is listed for November 22, 2026 (provisional date).", "sources": [{"label": "Assyro November 2026 PDUFA calendar", "url": "https://www.assyro.com/tools/pdufa-calendar/2026/november"}], "why": "A rare-disease launch with a small, specialized team where each pulmonologist conversation matters.", "buyers": ["Head of Commercial", "Training and Development lead"], "pains": ["Small team, little room for slow ramp", "Complex disease education for specialists"], "play": "AI Roleplay, Readiness AI", "emailSubject": "", "emailBody": "", "opener": "", "caution": "", "nextStep": "Move to Researching about six weeks before the decision", "nextDate": "", "log": [{"date": "2026-10-04", "type": "Note", "text": "Added from launch-trigger research"}], "updatedAt": "2026-10-04T12:00:00.000Z", "id": "savara"}, {"name": "GSK", "area": "Hepatology", "hq": "", "tier": "1", "stage": "watch", "triggerType": "pdufa", "triggerDate": "2026-10-26", "triggerDateLabel": "", "triggerLabel": "Bepirovirsen", "trigger": "FDA decision on bepirovirsen for chronic hepatitis B is dated October 26, 2026; it is positioned as a potential first-in-class functional cure.", "sources": [{"label": "Cardiology Advisor, October PDUFA dates", "url": "https://www.thecardiologyadvisor.com/news/october-2026-fda-pdufa-dates/"}, {"label": "HCPLive Q4 2026 preview", "url": "https://www.hcplive.com/view/q4-2026-preview-7-fda-decisions-to-watch"}], "why": "A first-in-class launch in a new category requires heavy HCP education and consistent messaging from day one.", "buyers": ["Director, Hepatology Sales Training", "U.S. Commercial Excellence"], "pains": ["Educating HCPs on a new treatment concept", "Consistency across a large field force"], "play": "AI Roleplay, Compliance AI", "emailSubject": "", "emailBody": "", "opener": "", "caution": "GSK licensed bepirovirsen from Ionis; GSK is the commercial lead to target.", "nextStep": "Move to Researching about six weeks before the decision", "nextDate": "", "log": [{"date": "2026-10-04", "type": "Note", "text": "Added from launch-trigger research"}], "updatedAt": "2026-10-04T12:00:00.000Z", "id": "gsk"}, {"name": "Agios Pharmaceuticals", "area": "Hematology", "hq": "", "tier": "2", "stage": "watch", "triggerType": "pdufa", "triggerDate": "2026-11-01", "triggerDateLabel": "", "triggerLabel": "Mitapivat, sickle cell", "trigger": "FDA decision on mitapivat for sickle cell disease is listed for November 1, 2026 (provisional date).", "sources": [{"label": "Assyro November 2026 PDUFA calendar", "url": "https://www.assyro.com/tools/pdufa-calendar/2026/november"}], "why": "A new indication in a much larger patient population than the drug's existing use, which typically means expanding and retraining the field team.", "buyers": ["Head of Sales Training", "VP, Sales"], "pains": ["Retraining tenured reps on a new indication", "Onboarding new hires added for the expansion"], "play": "Readiness AI, continuous coaching", "emailSubject": "", "emailBody": "", "opener": "", "caution": "", "nextStep": "Move to Researching about six weeks before the decision", "nextDate": "", "log": [{"date": "2026-10-04", "type": "Note", "text": "Added from launch-trigger research"}], "updatedAt": "2026-10-04T12:00:00.000Z", "id": "agios"}, {"name": "Gilead / Kite", "area": "Cell therapy", "hq": "", "tier": "2", "stage": "watch", "triggerType": "pdufa", "triggerDate": "2026-12-23", "triggerDateLabel": "", "triggerLabel": "Anito-cel", "trigger": "FDA decision on the BLA for anito-cel (BCMA CAR T) in fourth-line relapsed or refractory multiple myeloma is dated December 23, 2026.", "sources": [{"label": "Nova Pharma News PDUFA calendar", "url": "https://novapharmanews.com/regulatory/pdufa-calendar"}], "why": "Cell therapy launches depend on reps who can handle complex treatment-center conversations.", "buyers": ["Director, Cell Therapy Sales Training", "Commercial Excellence, Oncology"], "pains": ["Complex, high-stakes treatment-center conversations", "Training reps on logistics as well as clinical data"], "play": "AI Roleplay, Field AI", "emailSubject": "", "emailBody": "", "opener": "", "caution": "", "nextStep": "Move to Researching about six weeks before the decision", "nextDate": "", "log": [{"date": "2026-10-04", "type": "Note", "text": "Added from launch-trigger research"}], "updatedAt": "2026-10-04T12:00:00.000Z", "id": "kite"}, {"name": "Cogent Biosciences", "area": "Hematology and rare disease", "hq": "", "tier": "1", "stage": "watch", "triggerType": "pdufa", "triggerDate": "2026-12-15", "triggerDateLabel": "Q4 2026", "triggerLabel": "Bezuclastinib", "trigger": "An FDA decision on bezuclastinib for systemic mastocytosis is expected in Q4 2026. Exact date not confirmed; plotted mid-December.", "sources": [{"label": "HCPLive Q4 2026 preview", "url": "https://www.hcplive.com/view/q4-2026-preview-7-fda-decisions-to-watch"}], "why": "A potential first commercial launch, so the company would be building its first field team.", "buyers": ["Head of Commercial", "Training lead"], "pains": ["Building training from scratch", "Rare-disease specialist conversations"], "play": "Readiness AI, certification", "emailSubject": "", "emailBody": "", "opener": "", "caution": "", "nextStep": "Move to Researching about six weeks before the decision", "nextDate": "", "log": [{"date": "2026-10-04", "type": "Note", "text": "Added from launch-trigger research"}], "updatedAt": "2026-10-04T12:00:00.000Z", "id": "cogent"}, {"name": "Sanofi", "area": "Rare disease", "hq": "", "tier": "3", "stage": "watch", "triggerType": "pdufa", "triggerDate": "2026-11-25", "triggerDateLabel": "", "triggerLabel": "Venglustat", "trigger": "FDA decision on the NDA for venglustat in type 3 Gaucher disease is listed for November 25, 2026 (provisional date).", "sources": [{"label": "Assyro November 2026 PDUFA calendar", "url": "https://www.assyro.com/tools/pdufa-calendar/2026/november"}], "why": "Sanofi already appears on Quantified's customer logos, so a new launch is an expansion opportunity rather than a cold lead.", "buyers": ["Route to the account's AE or Customer Success manager"], "pains": ["Extending the platform to a new rare-disease team"], "play": "Expansion: coordinate with AE", "emailSubject": "", "emailBody": "", "opener": "", "caution": "Existing customer. Do not cold-prospect; share the trigger with the AE.", "nextStep": "Move to Researching about six weeks before the decision", "nextDate": "", "log": [{"date": "2026-10-04", "type": "Note", "text": "Added from launch-trigger research"}], "updatedAt": "2026-10-04T12:00:00.000Z", "id": "sanofi"}]};
+var KEY="quantified-playbook-v1", BASE=EMBEDDED.version;
+function clone(o){return JSON.parse(JSON.stringify(o));}
+function persist(){try{localStorage.setItem(KEY,JSON.stringify({base:BASE,accounts:accounts}));}catch(e){}}
+function newId(){return "lead-"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function localDoc(id){
+  return {
+    update:function(patch){var a=accounts.find(function(x){return x.id===id;});if(a)Object.assign(a,clone(patch));persist();render();if(openId&&$("detail").open)openDetail(openId);return Promise.resolve();},
+    set:function(data){var d=clone(data);d.id=id;var k=accounts.findIndex(function(x){return x.id===id;});if(k>=0)accounts[k]=d;else accounts.push(d);persist();render();return Promise.resolve();},
+    delete:function(){accounts=accounts.filter(function(x){return x.id!==id;});persist();render();return Promise.resolve();}
+  };
+}
+db={collection:function(){return {doc:function(id){return localDoc(id||newId());}};}};
+downloads={save:function(o){
+  try{var blob=new Blob([o.data],{type:"text/csv"});var url=URL.createObjectURL(blob);var a=document.createElement("a");a.href=url;a.download=o.filename;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},2000);return Promise.resolve();}
+  catch(e){return Promise.reject({code:"unavailable"});}
+}};
+canWrite=true;
+function start(master){
+  BASE=master.version||BASE;
+  var saved=null; try{saved=JSON.parse(localStorage.getItem(KEY)||"null");}catch(e){}
+  if(saved && saved.base===BASE && Array.isArray(saved.accounts)){accounts=saved.accounts;}
+  else {accounts=clone(master.accounts||[]); if(saved) setTimeout(function(){toast("The playbook was updated, so your demo changes were reset.");},400);}
+  loaded=true; render();
+}
+$("resetBtn").addEventListener("click",function(){try{localStorage.removeItem(KEY);}catch(e){}loadMaster();toast("Reset to the original playbook");});
+function loadMaster(){
+  var done=false;
+  try{
+    fetch("accounts.json",{cache:"no-store"}).then(function(r){if(!r.ok)throw 0;return r.json();}).then(function(m){if(m&&Array.isArray(m.accounts)){done=true;start(m);}else throw 0;}).catch(function(){if(!done)start(EMBEDDED);});
+  }catch(e){start(EMBEDDED);}
+}
+loadMaster();
+})();
+</script>
+</body>
+</html>
