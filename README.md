@@ -2,7 +2,7 @@
 
 A launch-window account playbook built by Sasha Podgurskyy as a work sample for the Quantified Business Development Representative role.
 
-It tracks 13 life sciences accounts by their FDA trigger: a recent approval, or a decision coming up. Each account has the buyers to reach, a Sales Navigator search to find them and the pain to test. Accounts in active pursuit also have a first-touch email and a call opener, and the Tier 1 ones have a five-touch sequence.
+It tracks 13 life sciences accounts by their FDA trigger: a recent approval, or a decision coming up. Each prospect has the buyers to reach, a Sales Navigator search to find them and the pain to test. Accounts in active pursuit also have a first-touch email and a call opener, and the Tier 1 ones have a five-touch sequence.
 
 **Live page:** add the GitHub Pages link here once Pages is turned on.
 
@@ -10,7 +10,7 @@ It tracks 13 life sciences accounts by their FDA trigger: a recent approval, or 
 
 - **Launch radar:** every account plotted by days since approval or days until the FDA decision, with the outreach windows marked.
 - **This week:** next steps due in the next seven days, plus anything that needs attention. Examples are a watchlist account inside six weeks of its decision, a decision date that has passed, or an overdue follow-up.
-- **Pipeline:** Watchlist → Researching → Contacted → Engaged → Meeting booked → Handed off. Open any account to see the full brief, move its stage, log an update or edit it.
+- **Pipeline:** Watchlist → Researching → Contacted → Engaged → Meeting booked → Handed off. Open any account to see the full brief, edit its email in place, move its stage, log an update or edit the whole account.
 - **Export CSV** for the current view.
 
 Changes a visitor makes stay in their own browser. **Reset to original** brings back the published version.

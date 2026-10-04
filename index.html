@@ -190,7 +190,14 @@ dialog::backdrop{background:rgba(10,24,20,.45);}
 .email .subj{font-weight:700;margin-bottom:10px;}
 .email .subj span{font-weight:500;color:var(--muted);}
 .email p{margin:0 0 10px;}
-.email-actions{display:flex;justify-content:flex-end;}
+.email-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;align-items:center;gap:8px;}
+.email-empty p{color:var(--muted);}
+.email-edit .field{margin-bottom:12px;}
+.email-edit label{display:block;font-weight:600;font-size:13.5px;color:var(--muted);margin-bottom:4px;}
+.email-edit input,.email-edit textarea{width:100%;border:1.5px solid var(--line);border-radius:9px;padding:9px 11px;background:var(--surface);font-size:15px;line-height:1.5;}
+.email-edit textarea{resize:vertical;min-height:200px;overflow:hidden;}
+@media (max-width:520px){.email-edit .kbd{display:none;}}
+.email-edit .hint{margin-right:auto;font-size:13px;color:var(--muted);}
 .opener{font-style:italic;}
 .caution{font-size:15px;color:var(--muted);border-left:3px solid var(--tier2);padding-left:12px;margin-top:12px;}
 .sources{font-size:14px;color:var(--muted);}
@@ -1325,11 +1332,35 @@ function renderView(){
 }
 
 /* ---------- detail ---------- */
-var openId=null;
+var openId=null, emailEditId=null;
+var EMAIL_START="Hi [First name],\n\n";
+function emailHTML(a,draft){
+  if(emailEditId===a.id){
+    var subj=draft?draft.s:(a.emailSubject||""), body=draft?draft.b:(a.emailBody||EMAIL_START+"\n\nSasha");
+    return '<form class="email email-edit" id="emailForm"><div class="field"><label for="emSubj">Subject</label><input id="emSubj" type="text" value="'+esc(subj)+'"></div>'+
+      '<div class="field"><label for="emBody">Email</label><textarea id="emBody" rows="'+Math.max(10,body.split("\n").length+2)+'">'+esc(body)+'</textarea></div>'+
+      '<div class="email-actions"><span class="hint">Blank line between paragraphs<span class="kbd"> · Ctrl+Enter saves</span></span><button class="btn quiet" type="button" id="emCancel">Cancel</button><button class="btn primary" type="submit">Save email</button></div></form>';
+  }
+  var paras=String(a.emailBody||"").split(/\n\s*\n/).filter(Boolean);
+  if(!paras.length) return '<div class="email email-empty"><p>Not drafted yet.</p><div class="email-actions"><button class="btn" type="button" id="emEdit">Write email</button></div></div>';
+  return '<div class="email"><div class="subj"><span>Subject:</span> '+esc(a.emailSubject||"")+'</div>'+paras.map(function(p){return '<p>'+esc(p)+'</p>';}).join("")+
+    '<div class="email-actions"><button class="btn quiet" type="button" id="emEdit">Edit email</button><button class="btn" type="button" data-copy="email">Copy email</button></div></div>';
+}
+function saveEmail(a){
+  var subj=$("emSubj").value.trim(), body=$("emBody").value.trim();
+  emailEditId=null;
+  if(subj===(a.emailSubject||"") && body===(a.emailBody||"")){openDetail(a.id);if($("emEdit"))$("emEdit").focus();toast("No changes to save");return;}
+  var had=!!a.emailBody;
+  a.emailSubject=subj; a.emailBody=body;
+  a.log=arr(a.log).concat([{date:todayISO(),type:"Outreach",text:had?"First-touch email edited":"First-touch email drafted"}]);
+  a.updatedAt=new Date().toISOString();
+  commit("Email saved");
+  if($("emEdit")) $("emEdit").focus();
+}
 function openDetail(id){
   var a=accounts.find(function(x){return x.id===id;}); if(!a) return; openId=id;
   var dlg=$("detail"), t=timing(a), focusId=dlg.open&&document.activeElement?document.activeElement.id:"";
-  var paras=String(a.emailBody||"").split(/\n\s*\n/).filter(Boolean);
+  var draft=emailEditId===a.id&&$("emBody")?{s:$("emSubj").value,b:$("emBody").value}:null;
   var srcs=arr(a.sources).filter(function(s){return s&&s.url;});
   var log=arr(a.log).slice().sort(function(x,y){return String(y.date).localeCompare(String(x.date));});
   var seq=arr(a.sequence);
@@ -1346,8 +1377,7 @@ function openDetail(id){
       (a.caution?'<p class="caution">'+esc(a.caution)+'</p>':'')+
       (srcs.length?'<h4>Sources</h4><p class="sources">'+srcs.map(function(s){return '<a href="'+esc(s.url)+'" target="_blank" rel="noopener">'+esc(s.label||s.url)+'</a>';}).join(", ")+'</p>':'')+
     '</div><div>'+
-      '<h4>First-touch email</h4>'+
-      (paras.length?'<div class="email"><div class="subj"><span>Subject:</span> '+esc(a.emailSubject||"")+'</div>'+paras.map(function(p){return '<p>'+esc(p)+'</p>';}).join("")+'<div class="email-actions"><button class="btn" type="button" data-copy="email">Copy email</button></div></div>':'<p style="color:var(--muted)">Not drafted yet. Use Edit to write one.</p>')+
+      '<h4>First-touch email</h4>'+emailHTML(a,draft)+
       (a.opener?'<h4>Call opener</h4><p class="opener">"'+esc(a.opener)+'"</p>':'')+
       ((a.nextStep||a.nextDate)?'<h4>Next step</h4><p>'+esc(a.nextStep||"")+(a.nextDate?' <span style="color:var(--muted)">by '+esc(fmtDate(a.nextDate))+'</span>':'')+'</p>':'')+
     '</div></div>'+
@@ -1364,6 +1394,18 @@ function openDetail(id){
    '</div>';
   if(!dlg.open) dlg.showModal();
   if(focusId && $(focusId)) $(focusId).focus();
+  if($("emEdit")) $("emEdit").addEventListener("click",function(){
+    emailEditId=a.id; openDetail(a.id);
+    var ta=$("emBody"); ta.focus();
+    var at=ta.value.indexOf(EMAIL_START)===0&&!a.emailBody?EMAIL_START.length:0; ta.setSelectionRange(at,at); ta.scrollTop=0;
+  });
+  if($("emailForm")){
+    var fit=function(){var t=$("emBody");t.style.height="auto";t.style.height=(t.scrollHeight+4)+"px";};
+    fit(); $("emBody").addEventListener("input",fit);
+    $("emailForm").addEventListener("submit",function(e){e.preventDefault();saveEmail(a);});
+    $("emailForm").addEventListener("keydown",function(e){if(e.key==="Enter"&&(e.ctrlKey||e.metaKey)){e.preventDefault();saveEmail(a);}});
+    $("emCancel").addEventListener("click",function(){emailEditId=null;openDetail(a.id);if($("emEdit"))$("emEdit").focus();});
+  }
   dlg.querySelectorAll("[data-copy]").forEach(function(b){
     b.addEventListener("click",function(){
       var k=b.getAttribute("data-copy");
@@ -1523,8 +1565,9 @@ document.addEventListener("click",function(e){
   var c=e.target.closest("[data-close]"); if(c){var d=c.closest("dialog"); if(d)d.close();}
   var vb=e.target.closest("[data-view]"); if(vb){ui.view=vb.getAttribute("data-view");document.querySelectorAll("[data-view]").forEach(function(b){b.setAttribute("aria-pressed",String(b===vb));});renderView();}
 });
-["detail","editor"].forEach(function(id){$(id).addEventListener("click",function(e){if(e.target===this)this.close();});});
-$("detail").addEventListener("close",function(){openId=null;});
+["detail","editor"].forEach(function(id){$(id).addEventListener("click",function(e){if(e.target===this && !(id==="detail"&&emailEditId))this.close();});});
+$("detail").addEventListener("cancel",function(e){if(emailEditId){e.preventDefault();emailEditId=null;openDetail(openId);if($("emEdit"))$("emEdit").focus();}});
+$("detail").addEventListener("close",function(){openId=null;emailEditId=null;});
 $("q").addEventListener("input",function(e){ui.q=e.target.value;renderView();});
 $("fTier").addEventListener("change",function(e){ui.tier=e.target.value;renderView();});
 $("addBtn").addEventListener("click",function(){openEditor(null);});
