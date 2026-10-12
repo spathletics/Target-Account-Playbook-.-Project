@@ -315,10 +315,12 @@ footer p{margin:0 0 6px;max-width:84ch;}
 <dialog id="editor" aria-labelledby="e-title"></dialog>
 <div class="toast" id="toast" role="status" hidden></div>
 
-<!-- Account data. Edit it here, then change "version" so returning visitors get the new copy. -->
+<!-- Account data. Edit it here, then change "version" so returning visitors get the new copy.
+     "planDate" is the Monday the next steps were planned for; the This week panel is measured from it. -->
 <script type="application/json" id="seed">
 {
- "version": "2026-10-04.2",
+ "version": "2026-10-12",
+ "planDate": "2026-10-12",
  "accounts": [
   {
    "name": "Revolution Medicines",
@@ -361,8 +363,8 @@ footer p{margin:0 0 6px;max-width:84ch;}
    "emailBody": "Hi [First name],\n\nCongratulations on Rasonque. Getting approval six and a half months early is remarkable, and it also compresses the window to get a brand-new field team launch-ready.\n\nWhen a first commercial team comes from many different companies, getting everyone to one on-label standard quickly is usually the hardest part. Quantified builds realistic AI practice from your approved content, and customers see about 40% faster time to readiness.\n\nWould 20 minutes be useful to see how other oncology launch teams certify reps before their next training wave?\n\nSasha",
    "opener": "Hi [name], it's Sasha from Quantified, I'll be brief. With Rasonque approved early, I'm guessing launch training got compressed. How are you certifying new reps on the second-line message right now?",
    "caution": "",
-   "nextStep": "Identify Head of Commercial Training in Sales Navigator",
-   "nextDate": "2026-10-09",
+   "nextStep": "Name the Head of Commercial Training and start the sequence; the hot window closes Oct 25",
+   "nextDate": "2026-10-14",
    "triggerDateLabel": "",
    "log": [
     {
@@ -376,7 +378,7 @@ footer p{margin:0 0 6px;max-width:84ch;}
      "text": "Five-touch sequence drafted"
     }
    ],
-   "updatedAt": "2026-10-04T20:00:00.000Z",
+   "updatedAt": "2026-10-12T15:00:00.000Z",
    "id": "revmed",
    "sequence": [
     {
@@ -428,8 +430,8 @@ footer p{margin:0 0 6px;max-width:84ch;}
      "url": "https://www.cbs19news.com/news/health/new-merck-pill-cuts-bad-cholesterol-by-60-potentially-replacing-injections/article_82b4567f-1547-53cd-a9ef-412847bc1f35.html"
     },
     {
-     "label": "Cardiology Advisor, October PDUFA dates",
-     "url": "https://www.thecardiologyadvisor.com/news/october-2026-fda-pdufa-dates/"
+     "label": "OncLive: I-DXd application withdrawn",
+     "url": "https://www.onclive.com/view/ifinatamab-deruxtecan-bla-voluntarily-withdrawn-in-previously-treated-extensive-stage-sclc"
     }
    ],
    "why": "Merck's stated goal is to \"democratize PCSK9,\" moving a class known for specialist injections into a routine pill. That likely means a much wider set of prescribers and many more conversations to get right.",
@@ -447,9 +449,9 @@ footer p{margin:0 0 6px;max-width:84ch;}
    "emailSubject": "Lipfendra and one message across very different prescribers",
    "emailBody": "Hi [First name],\n\nMoving PCSK9 from injection to a once-daily pill probably means your reps are now calling on a much wider range of HCPs, from lipid specialists to primary care.\n\nKeeping the message consistent and on-label across that range, and knowing whether it is actually landing, is where large launches tend to lose value. Quantified gives reps realistic practice against each HCP persona using your approved content, and our new Field AI shows message pull-through from real visits.\n\nOpen to a short conversation on how you're measuring launch execution so far?\n\nSasha",
    "opener": "Hi [name], Sasha from Quantified. With Lipfendra reaching primary care as well as cardiology, how are you making sure reps handle both conversations the same way?",
-   "caution": "Merck also has an FDA decision on ifinatamab deruxtecan (small cell lung cancer) dated Oct 10, 2026: a second reason to reach out this quarter.",
+   "caution": "Merck and Daiichi Sankyo withdrew the U.S. application for ifinatamab deruxtecan in small cell lung cancer on Sept 25, so there is no second launch this quarter. Lead with Lipfendra only.",
    "nextStep": "Name the U.S. cardiometabolic training lead and start the sequence",
-   "nextDate": "2026-10-07",
+   "nextDate": "2026-10-16",
    "log": [
     {
      "date": "2026-10-04",
@@ -460,9 +462,14 @@ footer p{margin:0 0 6px;max-width:84ch;}
      "date": "2026-10-04",
      "type": "Outreach",
      "text": "Five-touch sequence drafted"
+    },
+    {
+     "date": "2026-10-12",
+     "type": "Trigger update",
+     "text": "Ifinatamab deruxtecan application withdrawn Sept 25; removed it as a second reason to reach out"
     }
    ],
-   "updatedAt": "2026-10-04T20:00:00.000Z",
+   "updatedAt": "2026-10-12T15:00:00.000Z",
    "id": "merck",
    "sequence": [
     {
@@ -488,7 +495,7 @@ footer p{margin:0 0 6px;max-width:84ch;}
     {
      "day": 14,
      "channel": "Email",
-     "text": "Hi [First name], last note from me. If launch readiness is on your plate more than once this quarter, I'm glad to share how other large teams handle back-to-back launches. Sasha"
+     "text": "Hi [First name], last note from me. If keeping the Lipfendra message consistent from cardiology to primary care becomes a priority, I'm glad to share how other large teams measure pull-through. Sasha"
     }
    ],
    "search": "Company: Merck · Geography: United States\nTitle: (\"sales training\" OR \"commercial excellence\" OR \"learning\") AND (cardiovascular OR cardiometabolic OR lipid)"
@@ -526,7 +533,7 @@ footer p{margin:0 0 6px;max-width:84ch;}
    "opener": "Hi [name], Sasha from Quantified. Five months into Baxfendy, what does reinforcement look like for reps now that launch training is behind them?",
    "caution": "",
    "nextStep": "Name the Baxfendy training director and start the sequence",
-   "nextDate": "2026-10-08",
+   "nextDate": "2026-10-16",
    "triggerDateLabel": "",
    "log": [
     {
@@ -540,7 +547,7 @@ footer p{margin:0 0 6px;max-width:84ch;}
      "text": "Five-touch sequence drafted"
     }
    ],
-   "updatedAt": "2026-10-04T20:00:00.000Z",
+   "updatedAt": "2026-10-12T15:00:00.000Z",
    "id": "az",
    "sequence": [
     {
@@ -608,7 +615,7 @@ footer p{margin:0 0 6px;max-width:84ch;}
    "opener": "Hi [name], Sasha from Quantified. With two launches in September, where is your team feeling the most pressure, building content or getting reps certified?",
    "caution": "Why Tier 2: a very large enterprise with likely incumbent tools and a long buying cycle. Multi-thread both therapy-area training leads and coordinate with the AE first.",
    "nextStep": "Check with the Lilly AE before any outreach",
-   "nextDate": "2026-10-06",
+   "nextDate": "2026-10-13",
    "triggerDateLabel": "",
    "log": [
     {
@@ -617,7 +624,7 @@ footer p{margin:0 0 6px;max-width:84ch;}
      "text": "Added from launch-trigger research"
     }
    ],
-   "updatedAt": "2026-10-04T12:00:00.000Z",
+   "updatedAt": "2026-10-12T15:00:00.000Z",
    "id": "lilly",
    "search": "Company: Eli Lilly and Company · Geography: United States\nTitle: (\"sales training\" OR \"learning\" OR \"enablement\") AND (oncology OR diabetes)"
   },
@@ -658,7 +665,7 @@ footer p{margin:0 0 6px;max-width:84ch;}
    "opener": "Hi [name], Sasha from Quantified. With a small team launching Fayuvi, how are reps practicing the specialist conversations before they happen?",
    "caution": "Why Tier 2: in early September a failed late-stage Angelman trial sent shares down about 44% in a day, so budgets are likely under scrutiny. Don't mention it in outreach; lead with efficiency and measurable ROI.",
    "nextStep": "Name the rare-disease training lead and send the first-touch email",
-   "nextDate": "2026-10-08",
+   "nextDate": "2026-10-14",
    "triggerDateLabel": "",
    "log": [
     {
@@ -667,7 +674,7 @@ footer p{margin:0 0 6px;max-width:84ch;}
      "text": "Added from launch-trigger research"
     }
    ],
-   "updatedAt": "2026-10-04T12:00:00.000Z",
+   "updatedAt": "2026-10-12T15:00:00.000Z",
    "id": "ultragenyx",
    "search": "Company: Ultragenyx\nTitle: (\"commercial training\" OR \"sales training\" OR \"learning\" OR \"commercial excellence\")"
   },
@@ -704,7 +711,7 @@ footer p{margin:0 0 6px;max-width:84ch;}
    "opener": "Hi [name], Sasha from Quantified. With the ivonescimab decision due in mid-November, how are you certifying reps on a data-heavy story before launch?",
    "caution": "",
    "nextStep": "Name the Head of Commercial Training and start the sequence",
-   "nextDate": "2026-10-09",
+   "nextDate": "2026-10-15",
    "log": [
     {
      "date": "2026-10-04",
@@ -727,7 +734,7 @@ footer p{margin:0 0 6px;max-width:84ch;}
      "text": "First-touch email, call opener and sequence drafted"
     }
    ],
-   "updatedAt": "2026-10-04T20:00:00.000Z",
+   "updatedAt": "2026-10-12T15:00:00.000Z",
    "id": "summit",
    "sequence": [
     {
@@ -813,7 +820,7 @@ footer p{margin:0 0 6px;max-width:84ch;}
    "area": "Rare pulmonary disease",
    "hq": "Langhorne, PA",
    "tier": "2",
-   "stage": "watch",
+   "stage": "research",
    "triggerType": "pdufa",
    "triggerDate": "2026-11-22",
    "triggerDateLabel": "",
@@ -835,12 +842,12 @@ footer p{margin:0 0 6px;max-width:84ch;}
     "Complex disease education for specialists"
    ],
    "play": "AI Roleplay, Readiness AI",
-   "emailSubject": "",
-   "emailBody": "",
-   "opener": "",
+   "emailSubject": "Molgramostim launch readiness for a small team",
+   "emailBody": "Hi [First name],\n\nWith the FDA decision on molgramostim for autoimmune PAP due November 22, I imagine launch planning for the pulmonology team is well underway.\n\nIn a rare disease, a small team gets few chances with each specialist, and every conversation about a complex disease has to be accurate and on-label. Quantified lets reps rehearse those conversations with realistic AI practice built from your approved materials, so they are ready before launch day. Customers see about 40% faster time to readiness.\n\nWould a short call before the decision be useful?\n\nSasha",
+   "opener": "Hi [name], Sasha from Quantified. With the molgramostim decision due November 22, how are you preparing a small team for specialist conversations about autoimmune PAP?",
    "caution": "The decision date has already moved once. Confirm it before outreach.",
-   "nextStep": "Move to Researching: decision is six weeks out",
-   "nextDate": "2026-10-11",
+   "nextStep": "Confirm the Nov 22 date, name the Head of Commercial and send the first-touch email",
+   "nextDate": "2026-10-15",
    "log": [
     {
      "date": "2026-10-04",
@@ -851,9 +858,19 @@ footer p{margin:0 0 6px;max-width:84ch;}
      "date": "2026-10-04",
      "type": "Trigger update",
      "text": "Confirmed the Nov 22 decision date; it was extended once in April"
+    },
+    {
+     "date": "2026-10-12",
+     "type": "Stage",
+     "text": "Moved to Researching: FDA decision is inside the six-week window"
+    },
+    {
+     "date": "2026-10-12",
+     "type": "Outreach",
+     "text": "First-touch email and call opener drafted"
     }
    ],
-   "updatedAt": "2026-10-04T20:00:00.000Z",
+   "updatedAt": "2026-10-12T15:00:00.000Z",
    "id": "savara",
    "search": "Company: Savara\nTitle: (commercial OR sales OR training)"
   },
@@ -892,8 +909,8 @@ footer p{margin:0 0 6px;max-width:84ch;}
    "emailBody": "Hi [First name],\n\nWith the FDA decision on bepirovirsen due October 26, I imagine launch training for the hepatology team is well underway.\n\nA potential functional cure gives reps a new kind of conversation to have with hepatitis B prescribers, and it has to sound the same in every territory from day one. Quantified lets reps rehearse that conversation with realistic AI practice built from your approved launch materials, and shows training leaders who is ready before launch.\n\nWould 20 minutes before the decision be useful to compare notes on launch certification?\n\nSasha",
    "opener": "Hi [name], Sasha from Quantified. With the bepirovirsen decision due October 26, how are you preparing reps to explain a functional-cure goal, which is a new conversation for most hepatitis B prescribers?",
    "caution": "GSK licensed bepirovirsen from Ionis; GSK is the commercial lead to target.",
-   "nextStep": "Name the hepatology training lead and start the sequence before the Oct 26 decision",
-   "nextDate": "2026-10-06",
+   "nextStep": "Name the hepatology training lead and start the sequence; the decision is Oct 26",
+   "nextDate": "2026-10-13",
    "log": [
     {
      "date": "2026-10-04",
@@ -916,7 +933,7 @@ footer p{margin:0 0 6px;max-width:84ch;}
      "text": "First-touch email, call opener and sequence drafted"
     }
    ],
-   "updatedAt": "2026-10-04T20:00:00.000Z",
+   "updatedAt": "2026-10-12T15:00:00.000Z",
    "id": "gsk",
    "sequence": [
     {
@@ -978,8 +995,8 @@ footer p{margin:0 0 6px;max-width:84ch;}
    "emailBody": "Hi [First name],\n\nWith the FDA decision on mitapivat for sickle cell disease due November 1, your team may soon be selling into a much larger patient population than before.\n\nExpansions like this usually bring two training problems at once: retraining tenured reps on a new indication and ramping new hires fast. Quantified handles both with realistic AI practice built from your approved content, and customers see about 40% faster time to readiness.\n\nWould a short call before the decision be useful?\n\nSasha",
    "opener": "Hi [name], Sasha from Quantified. If mitapivat is approved in sickle cell on November 1, how are you planning to retrain tenured reps and ramp new hires at the same time?",
    "caution": "",
-   "nextStep": "Name the Head of Sales Training and send the first-touch email",
-   "nextDate": "2026-10-07",
+   "nextStep": "Name the Head of Sales Training and send the first-touch email before the Nov 1 decision",
+   "nextDate": "2026-10-13",
    "log": [
     {
      "date": "2026-10-04",
@@ -1002,7 +1019,7 @@ footer p{margin:0 0 6px;max-width:84ch;}
      "text": "First-touch email and call opener drafted"
     }
    ],
-   "updatedAt": "2026-10-04T20:00:00.000Z",
+   "updatedAt": "2026-10-12T15:00:00.000Z",
    "id": "agios",
    "search": "Company: Agios Pharmaceuticals\nTitle: (\"sales training\" OR \"commercial training\" OR \"learning\" OR \"head of sales\")"
   },
@@ -1220,15 +1237,19 @@ function inWindow(a){
   return n<=0 && -n<=HOT;
 }
 function flags(a){
-  var f=[], n=days(a);
+  var f=[], n=days(a), p=planDate(), td=parseDate(a.triggerDate), np=td?daysBetween(p,td):null;
   if(timing(a).stale) f.push("Decision date passed: update the trigger");
-  if(a.stage==="watch" && a.triggerType==="pdufa" && !isCustomer(a.name) && n!=null && n>=0 && n<=SIX_WEEKS) f.push("FDA decision in "+plural(n,"day")+": move to Researching");
-  var nd=parseDate(a.nextDate); if(nd && nd<today()) f.push("Next step was due "+fmtDate(a.nextDate)+": "+(a.nextStep||"follow up"));
+  if(a.stage==="watch" && a.triggerType==="pdufa" && !isCustomer(a.name) && np!=null && np>=0 && np<=SIX_WEEKS && n>=0) f.push("FDA decision in "+plural(n,"day")+": move to Researching");
+  var nd=parseDate(a.nextDate); if(nd && nd<p) f.push("Next step was due "+fmtDate(a.nextDate)+": "+(a.nextStep||"follow up"));
   if(a.stage!=="watch" && a.stage!=="handoff" && !a.emailBody && !isCustomer(a.name)) f.push("No first-touch email drafted yet");
   if(a.stage!=="watch" && a.stage!=="handoff" && !a.nextStep) f.push("No next step set");
   return f;
 }
-function dueThisWeek(a){var nd=parseDate(a.nextDate);return !!(nd && a.nextStep && nd>=today() && nd<=addDays(today(),WEEK));}
+/* Next steps are a plan made on MASTER.planDate. Visitors who open the page later see that plan,
+   not a list of overdue items; facts such as a passed FDA decision still use the real date. */
+function planDate(){var d=parseDate(MASTER.planDate);return d&&d<today()?d:today();}
+function planIsToday(){return planDate().getTime()===today().getTime();}
+function dueThisWeek(a){var nd=parseDate(a.nextDate),p=planDate();return !!(nd && a.nextStep && nd>=p && nd<=addDays(p,WEEK));}
 function tierPill(t){t=String(t||"3");return '<span class="pill t'+esc(t)+'">Tier '+esc(t)+'</span>';}
 
 function filtered(){
@@ -1247,12 +1268,12 @@ function renderStats(){
   var active=accounts.filter(function(a){return a.stage!=="watch";}).length;
   var win=accounts.filter(inWindow).length;
   var upcoming=accounts.filter(function(a){var n=days(a);return a.triggerType==="pdufa"&&n!=null&&n>=0;}).length;
-  var due=accounts.filter(function(a){var nd=parseDate(a.nextDate);return a.nextStep&&nd&&nd<=addDays(today(),WEEK);}).length;
+  var due=accounts.filter(function(a){var nd=parseDate(a.nextDate);return a.nextStep&&nd&&nd<=addDays(planDate(),WEEK);}).length;
   $("stats").innerHTML=
     '<div class="stat"><b>'+active+'</b><span>Accounts in active pursuit</span></div>'+
     '<div class="stat"><b>'+win+'</b><span>In the outreach window today</span></div>'+
     '<div class="stat"><b>'+upcoming+'</b><span>FDA decisions ahead</span></div>'+
-    '<div class="stat"><b>'+due+'</b><span>Next steps due this week</span></div>';
+    '<div class="stat"><b>'+due+'</b><span>'+(planIsToday()?'Next steps due this week':'Next steps in this week\'s plan')+'</span></div>';
   var last=accounts.reduce(function(m,a){return a.updatedAt&&a.updatedAt>m?a.updatedAt:m;},"");
   $("freshness").textContent=last?("Last updated "+fmtDate(last.slice(0,10))+"."):"";
 }
@@ -1294,12 +1315,15 @@ function renderWeek(){
   due.sort(function(x,y){return x.d-y.d||String(x.a.name).localeCompare(String(y.a.name));});
   var el=$("week");
   if(!warn.length && !due.length){el.hidden=true;el.innerHTML="";return;}
-  var sub=[]; if(warn.length) sub.push(plural(warn.length,"item")+" need attention"); if(due.length) sub.push(plural(due.length,"next step")+" due in the next 7 days");
+  var live=planIsToday(), sub=[];
+  if(warn.length) sub.push(plural(warn.length,"item")+(warn.length===1?" needs":" need")+" attention");
+  if(due.length) sub.push(plural(due.length,"next step")+(live?" due in the next 7 days":""));
+  if(!live) sub.push("planned "+fmtDay(planDate()));
   var rows=warn.map(function(x){return '<li class="warn"><span><span class="chip">Now</span></span><button class="linkish" type="button" data-open="'+esc(x.a.id)+'">'+esc(x.a.name)+'</button><span class="what">'+esc(x.text)+'</span></li>';})
     .concat(due.map(function(x){return '<li><time datetime="'+esc(x.a.nextDate)+'">'+esc(fmtDay(x.d))+'</time><button class="linkish" type="button" data-open="'+esc(x.a.id)+'">'+esc(x.a.name)+'</button><span class="what">'+esc(x.text)+'</span></li>';}));
   var CAP=10, more=rows.length-CAP;
   el.hidden=false;
-  el.innerHTML='<div class="week-head"><h2 id="week-h">This week</h2><span>'+esc(sub.join(" · "))+'</span></div><ul>'+
+  el.innerHTML='<div class="week-head"><h2 id="week-h">'+(live?'This week':'Plan for the week of '+esc(planDate().toLocaleDateString("en-US",{month:"short",day:"numeric"})))+'</h2><span>'+esc(sub.join(" · "))+'</span></div><ul>'+
     (ui.weekAll||more<=0?rows:rows.slice(0,CAP)).join("")+'</ul>'+
     (more>0?'<p class="week-more"><button class="linkish" type="button" id="weekToggle">'+(ui.weekAll?"Show fewer":"Show all "+rows.length)+'</button></p>':'');
   if(more>0) $("weekToggle").addEventListener("click",function(){ui.weekAll=!ui.weekAll;renderWeek();});

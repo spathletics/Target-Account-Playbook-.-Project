@@ -21,7 +21,7 @@ Everything lives in `index.html`. The account data is the JSON block near the bo
 
 1. Edit the account in that block.
 2. Change `"version"` at the top of the block. Returning visitors then get the new data instead of their old copy.
-3. Update `nextDate` values before sharing the link. Next steps that are past due show as "needs attention".
+3. When you plan a new week, set `"planDate"` to that Monday and give each account a `nextDate` in that week. Visitors who open the page later see that week's plan rather than a list of overdue items.
 
 ## Publishing
 
